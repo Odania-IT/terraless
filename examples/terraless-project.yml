@@ -1,0 +1,36 @@
+---
+Providers:
+  - Type: global
+    Name: aws-default
+  - Type: aws
+    Name: custom-aws
+    Data:
+      region: eu-west-1
+      profile: my-custom-aws-profile
+      alias: eu-west-1
+
+Backend:
+  Type: global
+
+Terraform:
+  Modules:
+    - module_a
+    - module_b
+
+Package:
+  Include:
+    - src/**
+
+Functions:
+  MyTestLambda:
+    Handler: test.Handler
+    Description: My Production
+    MemorySize: 512
+    Runtime: ruby2.5
+    Timeout: 60
+    Events:
+      - sqs: "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${self:provider.stage}-my-queue"
+
+Swamp:
+  - account1
+  - account2

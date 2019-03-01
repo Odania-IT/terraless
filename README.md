@@ -1,0 +1,25 @@
+# Terraless
+
+Helper to deploy projects with Lambda. This helps to unify the backend and provider sections.
+
+For this there are 2 config files. One global config file and one project specific config file.
+
+In the project specific config you can reference parts of the global config or add specific parts.
+
+## Configs
+
+Example Global Config: [examples/terraless.yml](examples/terraless.yml)
+Example Project Config: [examples/terraless-project.yml](examples/terraless-project.yml)
+
+### Global Config
+
+The global config will be automatically looked up relative to the home folder in the following locations:
+
+		.terraless
+		.config.terraless
+		.aws",
+		.configgcloud
+
+## Executiion
+
+terraless -config examples/terraless-project.yml -global-config examples/terraless.yml
