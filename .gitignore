@@ -1,4 +1,8 @@
+.get-deps
 .idea
 examples/.terraless
 terraless
 terraless_alpine
+terraless_amd64
+terraless_darwin
+terraless.exe

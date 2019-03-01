@@ -20,6 +20,6 @@ The global config will be automatically looked up relative to the home folder in
 		.aws",
 		.configgcloud
 
-## Executiion
+## Execution
 
 terraless -config examples/terraless-project.yml -global-config examples/terraless.yml
