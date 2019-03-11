@@ -7,7 +7,7 @@ Backends:
       encrypt: true
       region: eu-central-1
       dynamodb_table: terraform-state-lock
-      profile: my-aws-infrastrucutre-profile
+      profile: my-aws-infrastrucutre-profile-developer
 
 Teams:
   - Name: Team A
@@ -15,11 +15,24 @@ Teams:
       - Type: aws
         Name: aws-default
         Data:
+          accountId: '01234556678'
           region: eu-central-1
           profile: my-aws-profile
+        Roles:
+          - developer
       - Type: aws
-        Name: aws-us-east
+        Name: aws-develop
         Data:
-          region: us-east-1
+          accountId: '01234556678'
+          region: eu-central-1
           profile: my-aws-profile
-          alias: us-east-1
+        Roles:
+          - developer
+      - Type: aws
+        Name: my-aws-infrastrucutre-profile
+        Data:
+          accountId: '01234556678'
+          region: eu-central-1
+          profile: my-aws-profile
+        Roles:
+          - developer

@@ -14,6 +14,11 @@ import (
 )
 
 func processUpload(config schema.TerralessConfig, upload schema.TerralessUpload) {
+	if upload.Type != "s3" {
+		logrus.Debugf("AWS-Provider can not handle upload %s\n", upload.Type)
+		return
+	}
+
 	provider, _ := config.Providers[upload.Provider]
 	credentials := credentials.NewSharedCredentials("", provider.Data["profile"])
 

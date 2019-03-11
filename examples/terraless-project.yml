@@ -28,7 +28,15 @@ Package:
 Functions:
   MyTestLambda:
     Handler: test.Handler
-    Description: My Production
+    Description: My Test Lambda Description
+    MemorySize: 512
+    Runtime: ruby2.5
+    Timeout: 60
+    Events:
+      - Type: http
+  MyTestLambda2:
+    Handler: test.Handler2
+    Description: My Test Lambda Description
     MemorySize: 512
     Runtime: ruby2.5
     Timeout: 60
