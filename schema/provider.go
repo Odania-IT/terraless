@@ -1,11 +1,11 @@
 package schema
 
 type Provider struct {
-	CanHandle             CanHandleFunc
-	// FilterActiveProviders FilterActiveProfilesFunc
-	PrepareSession        PrepareSessionFunc
+	CanHandle      CanHandleFunc
+	PrepareSession PrepareSessionFunc
+	ProcessUpload  ProcessUploadFunc
 }
 
 type CanHandleFunc func(resourceType string) bool
-// type FilterActiveProfilesFunc func(terralessConfig TerralessConfig) map[string]TerralessProvider
 type PrepareSessionFunc func(terralessConfig TerralessConfig)
+type ProcessUploadFunc func(config TerralessConfig, upload TerralessUpload)

@@ -77,6 +77,6 @@ func main() {
 	if arguments.NoUpload {
 		logrus.Debug("Not uploading due to arguments....")
 	} else {
-		uploads.ProcessUploads(currentConfig)
+		uploads.ProcessUploads(*terralessData)
 	}
 }
