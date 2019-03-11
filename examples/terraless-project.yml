@@ -2,11 +2,13 @@
 Settings:
   AutoSignIn: true
 
-Teams:
-  - Name: Team A
+ActiveProviders:
+  - Team: Team A
     Providers:
       - Type: global
         Name: aws-default
+      - Type: global
+        Name: aws-${environment}-developer
       - Type: aws
         Name: custom-aws
         Data:
@@ -17,11 +19,8 @@ Teams:
 Backend:
   Type: global
   Name: myBackend
-
-Terraform:
-  Modules:
-    - module_a
-    - module_b
+  Data:
+    key: myProjectKey
 
 Package:
   SourceDir: src
@@ -36,3 +35,31 @@ Functions:
     Events:
       - Type: sqs
         Arn: "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${self:provider.stage}-my-queue"
+
+Certificates:
+  MyCert:
+    Domain: my-domain.com
+    Type: aws
+    Aliases:
+      - "*.my-domain.com"
+    Providers:
+      - "aws.us-east"
+    ZoneId: "${aws_route53_zone.zone.id}"
+
+Uploads:
+  - Type: s3
+    Bucket: example-${environment}-public
+    Provider: aws-${environment}-developer
+    Region: eu-central-1
+    Source: public
+    Target: admin
+    PreCommands:
+      - ng build --prod
+    Cloudfront:
+      Certificate: MyCert
+      Domain: admin.my-domain.com
+      PriceClass: PriceClass_100
+      Caching:
+        DefaultTTL: 0
+        MinTTL: 0
+        MaxTTL: 0

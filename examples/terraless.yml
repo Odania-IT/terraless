@@ -1,4 +1,14 @@
 ---
+Backends:
+  - Type: s3
+    Name: myBackend
+    Data:
+      bucket: my-bucket-name
+      encrypt: true
+      region: eu-central-1
+      dynamodb_table: terraform-state-lock
+      profile: my-aws-infrastrucutre-profile
+
 Teams:
   - Name: Team A
     Providers:
@@ -13,14 +23,3 @@ Teams:
           region: us-east-1
           profile: my-aws-profile
           alias: us-east-1
-
-Backends:
-  - Type: s3
-    Name: myBackend
-    Data:
-      bucket: my-bucket-name
-      encrypt: true
-      region: eu-central-1
-      dynamodb_table: terraform-state-lock
-      key: my-key
-      profile: my-aws-infrastrucutre-profile

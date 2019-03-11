@@ -87,7 +87,7 @@ func ProcessUploads(terralessConfig schema.TerralessConfig) {
 	}
 
 	for _, upload := range terralessConfig.Uploads {
-		logrus.Debug("Processing upload: ", upload)
+		logrus.Debugf("Processing upload: %s\n", upload)
 		provider, _ := terralessConfig.Providers[upload.Provider]
 		credentials := credentials2.NewSharedCredentials("", provider.Data["profile"])
 
