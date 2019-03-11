@@ -1,9 +1,10 @@
-package main
+package config
 
 import (
 	"flag"
 	"fmt"
-	"github.com/Sirupsen/logrus"
+	"github.com/Odania-IT/terraless/schema"
+	"github.com/sirupsen/logrus"
 	"os"
 	"os/user"
 	"path"
@@ -13,15 +14,6 @@ import (
 const (
 	VERSION = "0.1.0"
 )
-
-type Arguments struct {
-	Config string
-	Environment string
-	ForceDeploy bool
-	GlobalConfig string
-	LogLevel string
-	TerraformCommand string
-}
 
 func detectGlobalConfig() string {
 	configFolders := []string{
@@ -47,14 +39,16 @@ func detectGlobalConfig() string {
 	return ""
 }
 
-func parseArguments() Arguments {
+func ParseArguments() schema.Arguments {
 	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
-	arguments := &Arguments{
+	arguments := &schema.Arguments{
 		Config: path.Join(dir, "terraless.yml"),
 		Environment: "develop",
 		TerraformCommand: "terraform",
 	}
 	flag.StringVar(&arguments.Config, "config", arguments.Config, "Config file")
+	flag.BoolVar(&arguments.NoDeploy, "no-deploy", arguments.NoDeploy, "Do not execute deploy")
+	flag.BoolVar(&arguments.NoUpload, "no-upload", arguments.NoUpload, "Do not upload")
 	flag.StringVar(&arguments.Environment, "environment", arguments.Environment, "Environment")
 	flag.BoolVar(&arguments.ForceDeploy, "force-deploy", arguments.ForceDeploy, "Force deployment (Do not ask the user)")
 	flag.StringVar(&arguments.GlobalConfig, "global-config", arguments.Config, "Global config file")
@@ -71,7 +65,7 @@ func flagUsage() {
 	flag.PrintDefaults()
 }
 
-func setArgumentDefaults(arguments Arguments) Arguments {
+func setArgumentDefaults(arguments schema.Arguments) schema.Arguments {
 	if arguments.LogLevel == "" {
 		arguments.LogLevel = "INFO"
 	}

@@ -3,7 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/Sirupsen/logrus"
+	"github.com/Odania-IT/terraless/schema"
+	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 	"strings"
@@ -49,13 +50,7 @@ func checkApprove() bool {
 	return false
 }
 
-func execSwamp(config TerralessConfig) {
-	for _, account := range config.Swamp {
-		executeCommand(config.SourcePath, "swamp-" + account, []string{}, false)
-	}
-}
-
-func deploy(config TerralessConfig, environment string, forceDeploy bool, terraformCommand string) {
+func deploy(config schema.TerralessConfig, environment string, forceDeploy bool, terraformCommand string) {
 	logrus.Info("Executing terraform init")
 	executeCommand(config.SourcePath, terraformCommand, []string{"init"}, false)
 	logrus.Info("Creating new terraform workspace")

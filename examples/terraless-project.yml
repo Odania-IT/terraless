@@ -1,16 +1,22 @@
 ---
-Providers:
-  - Type: global
-    Name: aws-default
-  - Type: aws
-    Name: custom-aws
-    Data:
-      region: eu-west-1
-      profile: my-custom-aws-profile
-      alias: eu-west-1
+Settings:
+  AutoSignIn: true
+
+Teams:
+  - Name: Team A
+    Providers:
+      - Type: global
+        Name: aws-default
+      - Type: aws
+        Name: custom-aws
+        Data:
+          region: eu-west-1
+          profile: my-custom-aws-profile
+          alias: eu-west-1
 
 Backend:
   Type: global
+  Name: myBackend
 
 Terraform:
   Modules:
@@ -18,7 +24,7 @@ Terraform:
     - module_b
 
 Package:
-  SourceDir: ${path.root}/src
+  SourceDir: src
 
 Functions:
   MyTestLambda:
@@ -28,8 +34,5 @@ Functions:
     Runtime: ruby2.5
     Timeout: 60
     Events:
-      - sqs: "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${self:provider.stage}-my-queue"
-
-Swamp:
-  - account1
-  - account2
+      - Type: sqs
+        Arn: "arn:aws:sqs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:${self:provider.stage}-my-queue"

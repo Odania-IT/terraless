@@ -23,3 +23,12 @@ The global config will be automatically looked up relative to the home folder in
 ## Execution
 
 terraless -config examples/terraless-project.yml -global-config examples/terraless.yml
+
+# TODO
+
+* Separately define global and local config
+* More providers ;)
+* Tests ;)
+* YAML config: Can it be written nicer?
+* Make it nicer...
+* Cleanup
