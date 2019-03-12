@@ -1,0 +1,6 @@
+---
+ActiveProviders:
+  - Team: myTeam
+    Providers:
+      - Type: global
+        Name: myTeam-${environment}-developer

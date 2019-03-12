@@ -1,0 +1,25 @@
+---
+Teams:
+  - Name: myTeam
+    Providers:
+      - Type: aws
+        Name: myTeam-develop
+        Data:
+          accountId: '01234556678'
+          region: eu-central-1
+        Roles:
+          - developer
+      - Type: aws
+        Name: myTeam-test
+        Data:
+          accountId: '01234556679'
+          region: eu-central-1
+        Roles:
+          - developer
+      - Type: aws
+        Name: myTeam-live
+        Data:
+          accountId: '012345566785'
+          region: eu-central-1
+        Roles:
+          - developer
