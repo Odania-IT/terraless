@@ -1,5 +1,7 @@
 # Terraless
 
+[![Build Status](https://travis-ci.org/Odania-IT/terraless.svg?branch=master)](https://travis-ci.org/Odania-IT/terraless)
+
 Helper to deploy projects with Lambda. This helps to unify the backend and provider sections.
 
 For this there are 2 config files. One global config file and one project specific config file.
@@ -16,9 +18,9 @@ Example Project Config: [examples/terraless-project.yml](examples/terraless-proj
 The global config will be automatically looked up relative to the home folder in the following locations:
 
 		.terraless
-		.config.terraless
+		.config/.terraless
 		.aws",
-		.configgcloud
+		.config/gcloud
 
 ## Execution
 

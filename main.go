@@ -30,6 +30,12 @@ func main() {
 
 	logrus.Info("Running terraless")
 	arguments, kingpinResult := parseArguments()
+
+	if kingpinResult == versionCommand.FullCommand() {
+		fmt.Printf("Terraless Version: %s [Codename: %s]\n", VERSION, CODENAME)
+		return
+	}
+
 	terralessData := config.NewTerralessData(arguments, detectTerralessProviders())
 	currentConfig := terralessData.Config
 
@@ -44,8 +50,6 @@ func main() {
 	case sessionCommand.FullCommand():
 		logrus.Debug("Handling Session Command")
 		stepPrepareSesssion(terralessData)
-	case versionCommand.FullCommand():
-		fmt.Printf("Terraless Version: %s [Codename: %s]\n", VERSION, CODENAME)
 	default:
 		logrus.Debug("Invalid step")
 		kingpin.Usage()
