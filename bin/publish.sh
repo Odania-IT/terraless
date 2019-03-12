@@ -4,4 +4,4 @@ cd ${SCRIPT_DIR}/..
 
 rm -rf dist
 
-goreleaser release --snapshot
+goreleaser release --snapshot --skip-publish
