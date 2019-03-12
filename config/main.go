@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/sirupsen/logrus"
+	"os"
 	"path/filepath"
 )
 
@@ -28,32 +29,19 @@ func NewTerralessData(arguments schema.Arguments, terralessProviders []schema.Pr
 		projectConfig.TargetPath = filepath.Join(filepath.Dir(terralessData.Arguments.Config), ".terraless")
 	}
 
-	// for _, terralessProvider := range terralessProviders {
-	// 	activeProviders := terralessProvider.FilterActiveProviders(*projectConfig)
-	// 	for _, activeProvider := range activeProviders {
-	// 		terralessData.ActiveProviders[activeProvider.Name] = activeProvider
-	// 	}
-	// }
+	logrus.Debug("Terraless target folder: ", projectConfig.TargetPath)
+	err := os.MkdirAll(projectConfig.TargetPath, os.ModePerm)
+
+	if err != nil {
+		logrus.Fatalf("Error creating target directory: %s\n", err)
+	}
 
 	globalConfig := readGlobalYamlConfig(terralessData.Arguments)
-	// globalConfig.BuildFinalConfig(projectConfig, arguments)
 
 	logrus.Debugln(projectConfig.ActiveProviders)
 
 	terralessData.Config = schema.BuildTerralessConfig(*globalConfig, *projectConfig, arguments)
 	terralessData.Config.Validate()
-
-	// for _, terralessProvider := range terralessProviders {
-	// 	activeProviders := terralessProvider.FilterActiveProviders(*projectConfig)
-	// 	for _, activeProvider := range activeProviders {
-	// 		terralessData.ActiveProviders[activeProvider.Name] = activeProvider
-	// 	}
-	// }
-
-	// logrus.Debug(terralessData.Config.Backend.Name)
-	// logrus.Debug(terralessData.Config.Backend.Type)
-	// logrus.Debug(terralessData.Config.Backend.Data)
-	// logrus.Fatal(terralessData.Config)
 
 	return terralessData
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/Odania-IT/terraless/uploads"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"os"
 	"path/filepath"
 )
 
@@ -37,13 +36,6 @@ func main() {
 	logrus.Debugf("Active Providers in Config: %d\n", len(currentConfig.Providers))
 
 	logrus.Debug("Config", currentConfig)
-
-	logrus.Debug("Terraless target folder: ", currentConfig.TargetPath)
-	err := os.MkdirAll(currentConfig.TargetPath, os.ModePerm)
-
-	if err != nil {
-		logrus.Fatalf("Error creating target directory: %s\n", err)
-	}
 
 	switch kingpinResult {
 	case deployCommand.FullCommand():
