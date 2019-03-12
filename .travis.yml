@@ -1,40 +1,23 @@
-# This is a weird way of telling Travis to use the fast container-based test
-# runner instead of the slow VM-based runner.
 sudo: false
-
 language: go
-
-# Force-enable Go modules. This will be unnecessary when Go 1.12 lands.
 env:
+  global:
   - GO111MODULE=on
-
-# You don't need to test on very old version of the Go compiler. It's the user's
-# responsibility to keep their compilers up to date.
+  - secure: E3uqy/QHzPdiuM3s0rNGTELWAI1Z/cKh2Gjlek56ECK/YLEM+TDcKE0u7Y4a0EH/Wyb0W/Fj5UBiO5pfmRA6zW6yusJyD2//xVieD8Tz5juZl1eUx6FI1aZJag19IFIfealg14qBgD4pNuIMvgAWFHRc/H27NJhxvapWOhi7p1AIx4A7ItJ0bwkQzTcRdYZwA9KUw73+BiU8HSQpmgVn/wIXzEg6Ao3UdExmpkGgLa5bhRsCbiWRpuAXOn0liZc3tk+o359CxH+MuNqSbyOluo3MrGvhOyC/22okVCXFn8/5dM0VB3NZg6bJGCdS39C73AzbhiI84eL1FDRJeBFoQVRuwsV9wEhYae9ux2exzbIokslJzhlLunCCrFZ6vELTwEfICL1xHsbO0C2KoDKzo8wxe2JVdbV4OC9jjz1eN7KtVDYdD2u+/ZEx1TElC8Gn1FpmrW69lTPNszRt99CJKfW8aBM3PMjQt7zfYG/wnP1sLcMYIjRHGsIbSyJKIA39e8NQALxIP2CA8o18UEMQEtUsF5DzZkU0bCRvdCo9zyfMP5AP0/STrHb+eABJPVphU/C8IAExq4PhxwfGMBZRKKC+yx7LY5n6kxj2t93JgPPQg7OKgFqjh8RDZumH2/oeMoHmQnNk+ocP0xmVIrDrydpSIKW4H1h83GsbbZEQg9I=
 go:
-  - 1.11.x
-
-# Only clone the most recent commit.
+- 1.11.x
 git:
   depth: 1
-
-# Skip the install step. Don't `go get` dependencies. Only build with the code
-# in vendor/
 install: true
-
 before_script:
-  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-
-# script always runs to completion (set +e). If we have linter issues AND a
-# failing test, we want to see both. Configure golangci-lint with a
-# .golangci.yml file at the top level of your repo.
+- go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 script:
-  - golangci-lint run       # run a bunch of code checkers/linters in parallel
-  - go test -v -race ./...  # Run all the tests with the race detector enabled
-
+- golangci-lint run
+- go test -v -race ./...
 deploy:
-  - provider: script
-    skip_cleanup: true
-    script: curl -sL https://git.io/goreleaser | bash
-    on:
-      tags: true
-      condition: $TRAVIS_OS_NAME = linux
+- provider: script
+  skip_cleanup: true
+  script: curl -sL https://git.io/goreleaser | bash
+  on:
+    tags: true
+    condition: "$TRAVIS_OS_NAME = linux"
