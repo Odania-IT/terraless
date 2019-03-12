@@ -18,7 +18,7 @@ provider "{{.Type}}" {
 }
 {{ end }}
 
-{{ if .Config.Backend }}
+{{ if .Config.Backend.Type }}
 terraform {
 	backend "{{ .Config.Backend.Type }}" {
 		{{ range $key, $value := .Config.Backend.Data }}{{$key}} = "{{$value}}"

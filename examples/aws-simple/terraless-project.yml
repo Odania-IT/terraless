@@ -1,0 +1,7 @@
+---
+ActiveProviders:
+  - Providers:
+      - Type: aws
+        Name: default
+        Data:
+          region: eu-west-1
