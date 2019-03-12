@@ -56,12 +56,17 @@ func renderFunctionTemplate(terralessData schema.TerralessData, targetFileName s
 		functionConfig.RenderEnvironment = len(functionConfig.Environment) > 0
 		functionConfig.FunctionName = functionName
 
+		// Set default runtime if none is specified for the function
+		if functionConfig.Runtime == "" {
+			functionConfig.Runtime = terralessData.Config.Settings.Runtime
+		}
+
 		if functionConfig.RoleArn == "" {
 			functionConfig.RoleArn = "${aws_iam_role.terraless-lambda-iam-role.arn}"
 			addTerralessLambdaRole = true
 		}
 
-		tmpl := template.Must(template.New("main.tf").Parse(tpl))
+		tmpl := template.Must(template.New("lambda-function.tf").Parse(tpl))
 		err = tmpl.Execute(targetFile, functionConfig)
 
 		if err != nil {

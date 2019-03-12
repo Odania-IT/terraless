@@ -83,7 +83,7 @@ func validateOrRefreshIntermediateSession(provider schema.TerralessProvider, int
 		region = "eu-central-1"
 	}
 
-	baseProfile := provider.Data["profile"]
+	baseProfile := provider.Data["base-profile"]
 	if baseProfile == "" {
 		baseProfile = "default"
 	}

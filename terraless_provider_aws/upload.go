@@ -20,10 +20,10 @@ func processUpload(config schema.TerralessConfig, upload schema.TerralessUpload)
 	}
 
 	provider, _ := config.Providers[upload.Provider]
-	credentials := credentials.NewSharedCredentials("", provider.Data["profile"])
+	currentCredentials := credentials.NewSharedCredentials("", provider.Data["profile"])
 
 	sess, err := session.NewSession(&aws.Config{
-		Credentials: credentials,
+		Credentials: currentCredentials,
 		Region: aws.String(upload.Region),
 	})
 

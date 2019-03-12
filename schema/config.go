@@ -86,10 +86,6 @@ type TerralessProvider struct {
 	Type  string            `yaml:"Type"`
 }
 
-type TerralessSettings struct {
-	AutoSignIn bool `yaml:"AutoSignIn"`
-}
-
 type TerralessType struct {
 	Data map[string]string `yaml:"Data"`
 	Name string            `yaml:"Name"`

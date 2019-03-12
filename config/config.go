@@ -26,7 +26,7 @@ func readProjectYamlConfig(arguments schema.Arguments) *schema.TerralessProjectC
 
 	logrus.Debugf("Read project YAML config %s\n", arguments.Config)
 
-	return config
+	return config.Validate()
 }
 
 func readGlobalYamlConfig(arguments schema.Arguments) *schema.TerralessGlobalConfig {
