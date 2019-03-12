@@ -1,15 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Odania-IT/terraless/config"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/Odania-IT/terraless/support"
 	"github.com/Odania-IT/terraless/terraless_provider_aws"
 	"github.com/Odania-IT/terraless/uploads"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
 	"path/filepath"
 )
+
+var terralessProviders []schema.Provider
 
 func detectTerralessProviders() []schema.Provider {
 	var terralessProviders []schema.Provider
@@ -23,11 +27,10 @@ func main() {
 		DisableLevelTruncation: true,
 	})
 
-	var terralessProviders []schema.Provider
 	terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
 
 	logrus.Info("Running terraless")
-	arguments := config.ParseArguments()
+	arguments, kingpinResult := parseArguments()
 	terralessData := config.NewTerralessData(arguments, detectTerralessProviders())
 	currentConfig := terralessData.Config
 
@@ -42,9 +45,26 @@ func main() {
 		logrus.Fatalf("Error creating target directory: %s\n", err)
 	}
 
-	for _, terralessProvider := range terralessProviders {
-		terralessProvider.PrepareSession(currentConfig)
+	switch kingpinResult {
+	case deployCommand.FullCommand():
+		logrus.Debug("Handling Deploy Command")
+		stepDeploy(terralessData)
+	case sessionCommand.FullCommand():
+		logrus.Debug("Handling Session Command")
+		stepPrepareSesssion(terralessData)
+	case versionCommand.FullCommand():
+		fmt.Printf("Terraless Version: %s [Codename: %s]\n", VERSION, CODENAME)
+	default:
+		logrus.Debug("Invalid step")
+		kingpin.Usage()
 	}
+}
+
+func stepDeploy(terralessData *schema.TerralessData) {
+	arguments := terralessData.Arguments
+	currentConfig := terralessData.Config
+
+	stepPrepareSesssion(terralessData)
 
 	terraless_provider_aws.RenderTemplates(*terralessData)
 
@@ -78,5 +98,11 @@ func main() {
 		logrus.Debug("Not uploading due to arguments....")
 	} else {
 		uploads.ProcessUploads(*terralessData)
+	}
+}
+
+func stepPrepareSesssion(terralessData *schema.TerralessData) {
+	for _, terralessProvider := range terralessProviders {
+		terralessProvider.PrepareSession(terralessData.Config)
 	}
 }
