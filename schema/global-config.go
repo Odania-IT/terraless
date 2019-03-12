@@ -11,6 +11,10 @@ type TerralessGlobalConfig struct {
 }
 
 func (globalCfg TerralessGlobalConfig) findTeamByName(teamName string) TerralessTeam {
+	if teamName == "" {
+		return TerralessTeam{}
+	}
+
 	for _, team := range globalCfg.Teams {
 		if team.Name == teamName {
 			return team
@@ -19,15 +23,4 @@ func (globalCfg TerralessGlobalConfig) findTeamByName(teamName string) Terraless
 
 	logrus.Fatalf("Team '%s' not found in global config\n", teamName)
 	return TerralessTeam{}
-}
-
-func (globalCfg TerralessGlobalConfig) findBackendByName(backendName string) TerralessBackend {
-	for _, backend := range globalCfg.Backends {
-		if backend.Name == backendName {
-			return backend
-		}
-	}
-
-	logrus.Fatalf("Could not find backend '%s'\n", backendName)
-	return TerralessBackend{}
 }

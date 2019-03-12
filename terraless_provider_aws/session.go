@@ -164,7 +164,12 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 }
 
 func (pw AwsProfileWriter) lockAndWriteAwsCredentials(credentials sts.Credentials, targetProfile string, region string) {
-	defer pw.lock.Unlock()
+	defer func() {
+		cerr := pw.lock.Unlock()
+		if cerr != nil {
+			logrus.Fatalf("[Provider: AWS] Failed to unlock Error %s\n", cerr)
+		}
+	}()
 
 	locked, err := pw.lock.TryLock()
 

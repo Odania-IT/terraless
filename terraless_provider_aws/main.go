@@ -26,9 +26,5 @@ func Provider() schema.Provider {
 }
 
 func canHandle(resourceType string) bool {
-	if resourceType == "aws" {
-		return true
-	}
-
-	return false
+	return resourceType == "aws"
 }

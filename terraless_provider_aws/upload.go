@@ -19,7 +19,7 @@ func processUpload(config schema.TerralessConfig, upload schema.TerralessUpload)
 		return
 	}
 
-	provider, _ := config.Providers[upload.Provider]
+	provider := config.Providers[upload.Provider]
 	currentCredentials := credentials.NewSharedCredentials("", provider.Data["profile"])
 
 	sess, err := session.NewSession(&aws.Config{
@@ -60,6 +60,10 @@ func recursiveUpload(sourceDir string, targetPrefix string, bucketName string, s
 			result = append(result, recursiveUpload(filename, targetFile, bucketName, svc)...)
 		} else {
 			err = AddFileToS3(svc, bucketName, filename, targetFile)
+			if err != nil {
+				logrus.Fatalf("Failed uploading file %s to s3 bucket %s\n", targetFile, bucketName)
+			}
+
 			result = append(result, targetFile)
 		}
 	}
@@ -73,7 +77,6 @@ func AddFileToS3(svc *s3manager.Uploader, bucket string, filename string, target
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
 	// Get file size and read the file content into a buffer
 	fileInfo, _ := file.Stat()
@@ -83,6 +86,11 @@ func AddFileToS3(svc *s3manager.Uploader, bucket string, filename string, target
 
 	if err != nil {
 		logrus.Fatalf("Can not read file %s! Error: %s\n", filename, err)
+	}
+
+	err = file.Close()
+	if err != nil {
+		logrus.Fatalf("Can close file %s! Error: %s\n", filename, err)
 	}
 
 	// Config settings: this is where you choose the bucket, filename, content-type etc.

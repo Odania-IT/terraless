@@ -16,6 +16,7 @@ func TestTerralessConfig_BuildTerralessConfig_NoData(t *testing.T) {
 
 	// then
 	expected := TerralessConfig{
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
 		Providers: map[string]TerralessProvider{},
 	}
@@ -37,6 +38,7 @@ func TestTerralessConfig_BuildTerralessConfig_SettingsIsInConfig(t *testing.T) {
 
 	// then
 	expected := TerralessConfig{
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
 		Providers: map[string]TerralessProvider{},
 		Settings: TerralessSettings{
@@ -67,6 +69,7 @@ func TestTerralessConfig_BuildTerralessConfig_ProvidersIsInGlobalConfig(t *testi
 
 	// then
 	expected := TerralessConfig{
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
 		Providers: map[string]TerralessProvider{},
 	}
@@ -80,7 +83,6 @@ func TestTerralessConfig_BuildTerralessConfig_ProvidersIsInProjectConfig(t *test
 	projectConfig := TerralessProjectConfig{
 		ActiveProviders: []TerralessActiveProvider{
 			{
-				Team: "myTeam",
 				Providers: []TerralessProvider{
 					{
 						Type: "aws",
@@ -114,6 +116,7 @@ func TestTerralessConfig_BuildTerralessConfig_ProvidersIsInProjectConfig(t *test
 	assert.Equal(t, 2, len(config.Providers))
 
 	expected := TerralessConfig{
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{
 			"aws": true,
 		},
@@ -193,6 +196,7 @@ func TestTerralessConfig_BuildTerralessConfig_ProjectConfigWithGlobalProvider(t 
 	assert.Equal(t, 2, len(config.Providers))
 
 	expected := TerralessConfig{
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{
 			"aws": true,
 		},
@@ -202,6 +206,7 @@ func TestTerralessConfig_BuildTerralessConfig_ProjectConfigWithGlobalProvider(t 
 				Type: "aws",
 				Data: map[string]string{
 					"dummyData": "dummyValue",
+					"profile": "myTeam-myEnvironment-myRole",
 				},
 			},
 			"myTeam-myEnvironment-mySecondRole": {
@@ -242,6 +247,7 @@ func TestTerralessConfig_BuildTerralessConfig_Backend(t *testing.T) {
 				"key": "val",
 			},
 		},
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
 		Providers: map[string]TerralessProvider{},
 	}
@@ -262,6 +268,7 @@ func TestTerralessConfig_BuildTerralessConfig_BackendWithProvider(t *testing.T) 
 					{
 						Name: "dummy-provider",
 						Type: "dummy",
+						Data: map[string]string{},
 					},
 				},
 			},
@@ -291,6 +298,7 @@ func TestTerralessConfig_BuildTerralessConfig_BackendWithProvider(t *testing.T) 
 				"key": "val",
 			},
 		},
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{
 			"dummy": true,
 		},
@@ -299,6 +307,9 @@ func TestTerralessConfig_BuildTerralessConfig_BackendWithProvider(t *testing.T) 
 				Name: "dummy-provider",
 				Type: "dummy",
 				Data: map[string]string{
+					"alias": "backend",
+					"profile": "dummy-provider",
+					"role": "provider",
 					"teamData": "teamValue",
 				},
 			},
@@ -344,6 +355,7 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackend(t *testing.T) {
 				"secondKey": "val",
 			},
 		},
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
 		Providers: map[string]TerralessProvider{},
 	}
@@ -374,6 +386,7 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackendWithProvider(t *testi
 					{
 						Type: "dummy",
 						Name: "dummy-provider",
+						Data: map[string]string{},
 					},
 				},
 			},
@@ -403,6 +416,7 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackendWithProvider(t *testi
 				"secondKey": "val",
 			},
 		},
+		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{
 			"dummy": true,
 		},
@@ -411,6 +425,9 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackendWithProvider(t *testi
 				Type: "dummy",
 				Name: "dummy-provider",
 				Data: map[string]string{
+					"alias": "backend",
+					"profile": "dummy-provider",
+					"role": "provider",
 					"teamKey": "teamValue",
 				},
 			},

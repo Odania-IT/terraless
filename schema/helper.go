@@ -20,7 +20,7 @@ func EnrichWithData(data map[string]string, override map[string]string) map[stri
 }
 
 func ProcessString(check string, arguments Arguments) string {
-	r, _ := regexp.Compile("\\$\\{[a-z]+\\}")
+	r, _ := regexp.Compile(string(`\$\{[a-z]+\}`))
 	matches := r.FindStringSubmatch(check)
 
 	if len(matches) > 0 {

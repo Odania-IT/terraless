@@ -117,6 +117,7 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 			},
 			Settings: schema.TerralessSettings{
 				AutoSignIn: true,
+				Runtime: "ruby2.5",
 			},
 			SourcePath: filepath.Join(baseDir(), "examples"),
 			TargetPath: filepath.Join(baseDir(), "examples", ".terraless"),

@@ -218,19 +218,3 @@ func (cfg TerralessConfig) Validate() {
 		}
 	}
 }
-
-func (cfg TerralessConfig) findProviderByName(providerName string) TerralessProvider {
-	parts := strings.Split(providerName, "-")
-	_ = parts[len(parts)-1]
-	globalName := strings.Join(parts[:len(parts)-1], "-")
-
-	for _, provider := range cfg.Providers {
-		if provider.Name == globalName {
-			return provider
-		}
-	}
-
-	logrus.Fatalf("Provider '%s' not found\n", providerName)
-
-	return TerralessProvider{}
-}
