@@ -1,5 +1,7 @@
 .get-deps
 .idea
+coverage.txt
 examples/.terraless
-terraless
 dist
+terraless
+

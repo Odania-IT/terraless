@@ -7,6 +7,7 @@ guard :shell do
         n m[0], "has changed."
     end
     file = File.dirname(m[0])
-    `cd #{file} && go test -v -race ./...`
+    `cd #{file} && go test -v -race -covermode=atomic ./...`
   end
 end
+
