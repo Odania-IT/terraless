@@ -15,8 +15,7 @@ script:
 - go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 after_success:
 - bash <(curl -s https://codecov.io/bash)
-- bash -c 'git status'
-- bash -c 'git clean -fd'
+- bash -c 'git checkout go.mod go.sum'
 deploy:
 - provider: script
   skip_cleanup: true
