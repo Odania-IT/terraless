@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-var sessionPrepared bool
 var uploadProcessed bool
 
 func dummyTerralessProvider() schema.Provider {
@@ -15,7 +14,6 @@ func dummyTerralessProvider() schema.Provider {
 			return resourceType == "dummy"
 		},
 		PrepareSession: func(terralessConfig schema.TerralessConfig) {
-			sessionPrepared = true
 		},
 		ProcessUpload: func(config schema.TerralessConfig, upload schema.TerralessUpload) {
 			uploadProcessed = true
@@ -23,11 +21,24 @@ func dummyTerralessProvider() schema.Provider {
 	}
 }
 
-func TestTerralessUploads_ProcessUploads_Simple(t *testing.T) {
+func TestTerralessUploads_ProcessUploads(t *testing.T) {
 	// given
 	terralessData := schema.TerralessData{
 		TerralessProviders: []schema.Provider{
 			dummyTerralessProvider(),
+		},
+		Config: schema.TerralessConfig{
+			Uploads: []schema.TerralessUpload{
+				{
+					Bucket:      "myBucket",
+					Provider:    "myProvider",
+					ProjectName: "myProject",
+					Region:      "myRegion",
+					Source:      "mySource",
+					Target:      "myTarget",
+					Type:        "dummy",
+				},
+			},
 		},
 	}
 
@@ -35,19 +46,5 @@ func TestTerralessUploads_ProcessUploads_Simple(t *testing.T) {
 	ProcessUploads(terralessData)
 
 	// then
-	assert.Fail(t, sessionPrepared)
-}
-
-func TestTerralessUploads_ProcessUploads_WithData(t *testing.T) {
-	// given
-	terralessData := schema.TerralessData{
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
-	}
-
-	// when
-	ProcessUploads(terralessData)
-
-	// then
+	assert.Equal(t, true, uploadProcessed)
 }
