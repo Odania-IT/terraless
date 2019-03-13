@@ -10,4 +10,3 @@ guard :shell do
     `cd #{file} && go test -v -race -covermode=atomic ./...`
   end
 end
-
