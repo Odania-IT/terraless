@@ -24,12 +24,12 @@ changelog:
     - '^docs:'
     - '^test:'
 
-brew:
-  github:
-    owner: Odania-IT
-    name: terraless-tap
-  folder: Formula
-  homepage:  https://github.com/Odania-IT/terraless
-  description: Terraless cloud army swiss knife
-  test: |
-    system "#{bin}/terraless version"
+# brew:
+#   github:
+#     owner: Odania-IT
+#     name: terraless-tap
+#   folder: Formula
+#   homepage:  https://github.com/Odania-IT/terraless
+#   description: Terraless cloud army swiss knife
+#   test: |
+#     system "#{bin}/terraless version"
