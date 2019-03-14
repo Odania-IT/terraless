@@ -1,4 +1,4 @@
-package uploads
+package templates
 
 import (
 	"github.com/Odania-IT/terraless/schema"
@@ -17,7 +17,7 @@ func ProcessUploads(terralessData schema.TerralessData) {
 		logrus.Debugf("Processing upload: %#v\n", upload)
 
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			terralessProvider.ProcessUpload(terralessConfig, upload)
+			terralessProvider.ProcessUpload(terralessData, upload)
 		}
 	}
 }

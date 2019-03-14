@@ -45,6 +45,8 @@ type TerralessCors struct {
 	Origin  string   `yaml:"Origin"`
 }
 
+var HttpMethods = []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "ANY"}
+
 type TerralessFunctionEvent struct {
 	Authorizer TerralessAuthorizer `yaml:"Authorizer"`
 	Arn        string              `yaml:"Arn"`
@@ -56,7 +58,11 @@ type TerralessFunctionEvent struct {
 	Type       string              `yaml:"Type"`
 
 	// only for rendering template
-	FunctionName string
+	FunctionName        string
+	Idx                 string
+	ProjectName         string
+	PathsRendered       map[string]string
+	ResourceNameForPath string
 }
 
 type TerralessFunction struct {
@@ -68,9 +74,11 @@ type TerralessFunction struct {
 	RoleArn     string                   `yaml:"RoleArn"`
 	Runtime     string                   `yaml:"Runtime"`
 	Timeout     int                      `yaml:"Timeout"`
+	Type        string                   `yaml:"Type"`
 
 	// only for rendering template
 	FunctionName      string
+	ProjectName       string
 	RenderEnvironment bool
 }
 

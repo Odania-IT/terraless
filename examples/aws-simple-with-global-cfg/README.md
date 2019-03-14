@@ -14,3 +14,4 @@ You can deploy the infrastructure with:
 Every terraform file you would add to the folder would automatically be executed.
 
 Depending on the environment it choose the correct provider from the global config.
+

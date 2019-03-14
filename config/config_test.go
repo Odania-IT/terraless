@@ -61,12 +61,14 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 					Events: []schema.TerralessFunctionEvent{
 						{
 							Type: "http",
+							Method: "ANY",
 						},
 					},
 					Handler: "test.Handler",
 					MemorySize: 512,
 					Runtime: "ruby2.5",
 					Timeout: 60,
+					Type: "aws",
 				},
 				"MyTestLambda2": {
 					Description: "My Test Lambda Description",
@@ -80,6 +82,7 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 					MemorySize: 512,
 					Runtime: "ruby2.5",
 					Timeout: 60,
+					Type: "aws",
 				},
 			},
 			Package:     schema.TerralessPackage{

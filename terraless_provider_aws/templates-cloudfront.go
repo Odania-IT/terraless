@@ -11,42 +11,33 @@ import (
 	"path/filepath"
 )
 
-func renderCloudfrontTemplates(currentConfig schema.TerralessConfig, targetFileName string) {
-	buffer := bytes.Buffer{}
-
+func RenderUploadTemplates(currentConfig schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
 	for _, upload := range currentConfig.Uploads {
-		targetFile := lambdaAtEdgeZip(currentConfig)
-		data := map[string]string {
-			"FileName": targetFile,
-			"ProjectName": currentConfig.ProjectName,
-		}
-		buffer = templates.RenderTemplateToBuffer(data, buffer, awsTemplates("lambda-at-edge.tf.tmpl"))
+		if upload.Type == "s3" {
+			targetFile := lambdaAtEdgeZip(currentConfig)
+			data := map[string]string{
+				"FileName":    targetFile,
+				"ProjectName": currentConfig.ProjectName,
+			}
+			buffer = templates.RenderTemplateToBuffer(data, buffer, awsTemplates("lambda-at-edge.tf.tmpl"), "lambda-at-edge.tf")
 
-		if upload.Cloudfront.Domain != "" {
-			logrus.Debugf("Generating cloudfront template for %s\n", upload.Cloudfront.Domain)
-			upload.Cloudfront.Aliases = append(upload.Cloudfront.Aliases, upload.Cloudfront.Domain)
-			upload.ProjectName = currentConfig.ProjectName
-			upload.Certificate = currentConfig.Certificates[upload.Cloudfront.Certificate]
-			upload.OwnCertificate = upload.Certificate.Domain != ""
-			upload.LambdaAtEdgeFile = targetFile
+			if upload.Cloudfront.Domain != "" {
+				logrus.Debugf("Generating cloudfront template for %s\n", upload.Cloudfront.Domain)
+				upload.Cloudfront.Aliases = append(upload.Cloudfront.Aliases, upload.Cloudfront.Domain)
+				upload.ProjectName = currentConfig.ProjectName
+				upload.Certificate = currentConfig.Certificates[upload.Cloudfront.Certificate]
+				upload.OwnCertificate = upload.Certificate.Domain != ""
+				upload.LambdaAtEdgeFile = targetFile
 
-			buffer = templates.RenderTemplateToBuffer(upload, buffer, awsTemplates("cloudfront.tf.tmpl"))
-			for _, alias := range upload.Cloudfront.Aliases {
-				buffer = Route53AliasRecordFor(alias, upload.Certificate.ZoneId, buffer)
+				buffer = templates.RenderTemplateToBuffer(upload, buffer, awsTemplates("cloudfront.tf.tmpl"), "terraless-upload-cloudfront")
+				for _, alias := range upload.Cloudfront.Aliases {
+					buffer = Route53AliasRecordFor(alias, upload.Certificate.ZoneId, buffer)
+				}
 			}
 		}
 	}
 
-	// Write to file
-	targetFile, err := os.Create(targetFileName)
-	if err != nil {
-		logrus.Fatal("Failed creating file: ", filepath.Base(targetFileName), err)
-	}
-
-	_, err = targetFile.Write(buffer.Bytes())
-	if err != nil {
-		logrus.Fatal("Failed wrtiting to file: ", filepath.Base(targetFileName), err)
-	}
+	return buffer
 }
 
 func lambdaAtEdgeZip(config schema.TerralessConfig) string {

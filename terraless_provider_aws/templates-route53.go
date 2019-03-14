@@ -29,5 +29,5 @@ func Route53AliasRecordFor(domain string, zoneId string, buffer bytes.Buffer) by
 		"ZoneId": zoneId,
 	}
 
-	return templates.RenderTemplateToBuffer(data, buffer, templateRoute53AliasRecord)
+	return templates.RenderTemplateToBuffer(data, buffer, templateRoute53AliasRecord, "route53-alias")
 }

@@ -1,4 +1,4 @@
-package uploads
+package templates
 
 import (
 	"github.com/Odania-IT/terraless/schema"
@@ -15,7 +15,7 @@ func dummyTerralessProvider() schema.Provider {
 		},
 		PrepareSession: func(terralessConfig schema.TerralessConfig) {
 		},
-		ProcessUpload: func(config schema.TerralessConfig, upload schema.TerralessUpload) {
+		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) {
 			uploadProcessed = true
 		},
 	}

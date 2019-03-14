@@ -13,13 +13,14 @@ import (
 	"path/filepath"
 )
 
-func processUpload(config schema.TerralessConfig, upload schema.TerralessUpload) {
+func processUpload(terralessData schema.TerralessData, upload schema.TerralessUpload) {
+	config := terralessData.Config
 	if upload.Type != "s3" {
 		logrus.Debugf("AWS-Provider can not handle upload %s\n", upload.Type)
 		return
 	}
 
-	provider := config.Providers[upload.Provider]
+	provider := config.Providers[schema.ProcessString(upload.Provider, terralessData.Arguments)]
 	currentCredentials := credentials.NewSharedCredentials("", provider.Data["profile"])
 
 	sess, err := session.NewSession(&aws.Config{

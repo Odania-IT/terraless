@@ -22,6 +22,9 @@ func Provider() schema.Provider {
 		CanHandle: canHandle,
 		PrepareSession: prepareSession,
 		ProcessUpload: processUpload,
+		RenderCertificateTemplates: RenderCertificateTemplates,
+		RenderFunctionTemplates: RenderFunctionTemplates,
+		RenderUploadTemplates: RenderUploadTemplates,
 	}
 }
 

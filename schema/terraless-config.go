@@ -26,6 +26,16 @@ type TerralessConfig struct {
 	Runtimes    []string
 }
 
+func (cfg *TerralessConfig) applyFunctionDefaults() {
+	for functionKey, function := range cfg.Functions {
+		for eventKey, event := range function.Events {
+			if event.Type == "http" && event.Method == "" {
+				cfg.Functions[functionKey].Events[eventKey].Method = "ANY"
+			}
+		}
+	}
+}
+
 func BuildTerralessConfig(globalCfg TerralessGlobalConfig, projectCfg TerralessProjectConfig, arguments Arguments) TerralessConfig {
 	result := TerralessConfig{
 		Certificates: map[string]TerralessCertificate{},
@@ -44,6 +54,7 @@ func BuildTerralessConfig(globalCfg TerralessGlobalConfig, projectCfg TerralessP
 	result.buildProviders(globalCfg, projectCfg, arguments)
 	result.buildUploads(globalCfg, projectCfg, arguments)
 	result.setProviderForBackend(globalCfg)
+	result.applyFunctionDefaults()
 
 	for _, provider := range result.Providers {
 		logrus.Debugf("Provider: %s Provider-Type: %s Data: %s\n", provider.Name, provider.Type, provider.Data)
@@ -214,6 +225,14 @@ func (cfg TerralessConfig) Validate() {
 		for _, event := range functionConfig.Events {
 			if event.Type == "" {
 				logrus.Fatal("Function ", functionName, " does have event without Type! ", event)
+			}
+
+			if event.Type == "http" && !support.Contains(HttpMethods, event.Method) {
+				logrus.Fatalf("Invalid Method in HTTP-Event Function: %s. Method: %s", functionName, event.Method)
+			}
+
+			if strings.HasPrefix(event.Path, "/") {
+				logrus.Fatalf("[ERROR] Path in HTTP-Event starts with '/'. Function: %s. Method: %s", functionName, event.Method)
 			}
 		}
 	}

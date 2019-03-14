@@ -31,6 +31,7 @@ var (
 	terraformCommand = app.Flag("terraform-command", "Terraform Command").Default("terraform").String()
 
 	deployCommand = app.Command("deploy", "Deploy")
+	initCommand = app.Command("init", "Initialize Templates")
 	sessionCommand = app.Command("session", "Handle Provider sessions")
 	versionCommand = app.Command("version", "Version")
 )

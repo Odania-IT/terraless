@@ -12,7 +12,7 @@ func TestTerralessTemplates_RenderTemplateToBuffer_Simple(t *testing.T) {
 	tpl := `Template`
 
 	// when
-	buffer := RenderTemplateToBuffer(data, bytes.Buffer{}, tpl)
+	buffer := RenderTemplateToBuffer(data, bytes.Buffer{}, tpl, "test")
 
 	// then
 	assert.Equal(t, buffer.String(), tpl)
@@ -26,7 +26,7 @@ func TestTerralessTemplates_RenderTemplateToBuffer_WithData(t *testing.T) {
 	tpl := `{{ .Content }}`
 
 	// when
-	buffer := RenderTemplateToBuffer(data, bytes.Buffer{}, tpl)
+	buffer := RenderTemplateToBuffer(data, bytes.Buffer{}, tpl, "test")
 
 	// then
 	assert.Equal(t, buffer.String(), data["Content"])

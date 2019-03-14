@@ -27,6 +27,7 @@ Package:
 
 Functions:
   MyTestLambda:
+    Type: aws
     Handler: test.Handler
     Description: My Test Lambda Description
     MemorySize: 512
@@ -35,6 +36,7 @@ Functions:
     Events:
       - Type: http
   MyTestLambda2:
+    Type: aws
     Handler: test.Handler2
     Description: My Test Lambda Description
     MemorySize: 512
