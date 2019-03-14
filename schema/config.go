@@ -77,6 +77,7 @@ type TerralessFunction struct {
 	Type        string                   `yaml:"Type"`
 
 	// only for rendering template
+	AddApiGatewayPermission bool
 	FunctionName      string
 	ProjectName       string
 	RenderEnvironment bool

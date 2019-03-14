@@ -35,6 +35,14 @@ resource "aws_lambda_function" "lambda-{{.FunctionName}}" {
   {{ end }}
 }
 
+{{ if .AddApiGatewayPermission }}
+resource "aws_lambda_permission" "lambda-{{.FunctionName}}" {
+  action = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.lambda-{{.FunctionName}}.function_name}"
+  principal = "apigateway.amazonaws.com"
+}
+{{ end }}
+
 `
 
 var addTerralessLambdaRole bool
@@ -52,6 +60,12 @@ func renderBaseFunction(functionConfig schema.TerralessFunction, functionName st
 	if functionConfig.RoleArn == "" {
 		functionConfig.RoleArn = "${aws_iam_role.terraless-lambda-iam-role.arn}"
 		addTerralessLambdaRole = true
+	}
+
+	for _, event := range functionConfig.Events {
+		if event.Type == "http" {
+			functionConfig.AddApiGatewayPermission = true
+		}
 	}
 
 	return templates.RenderTemplateToBuffer(functionConfig, buffer, lambdaFunctionsTemplate, "aws-lambda-function")
