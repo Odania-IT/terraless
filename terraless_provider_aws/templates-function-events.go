@@ -14,6 +14,10 @@ resource "aws_api_gateway_deployment" "terraless-api-gateway-v1" {
   stage_description = "Deployed at {{ currentTime }}"
 }
 
+output "api-gateway-invoke-url" {
+  value = "${aws_api_gateway_deployment.terraless-api-gateway-v1.invoke_url}"
+}
+
 `,
 }
 

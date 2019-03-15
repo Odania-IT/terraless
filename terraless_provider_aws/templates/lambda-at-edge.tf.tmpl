@@ -4,6 +4,7 @@ resource "aws_cloudwatch_log_group" "lambda-log-terraless-lambda-cloudfront" {
   name = "/aws/lambda/terraless-lambda-cloudfront-{{ .ProjectName }}"
   retention_in_days = 1
   provider = "aws.us-east"
+  tags = "${var.terraless-default-tags}"
 }
 
 resource "aws_lambda_function" "terraless-lambda-cloudfront" {
@@ -15,4 +16,5 @@ resource "aws_lambda_function" "terraless-lambda-cloudfront" {
   source_code_hash = "${base64sha256(file("{{ .FileName }}"))}"
   publish = true
   provider = "aws.us-east"
+  tags = "${var.terraless-default-tags}"
 }

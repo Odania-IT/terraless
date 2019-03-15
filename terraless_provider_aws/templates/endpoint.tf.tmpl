@@ -16,3 +16,7 @@ resource "aws_route53_record" "{{ .TerraformName }}" {
     zone_id = "${aws_api_gateway_domain_name.{{ .TerraformName }}.cloudfront_zone_id}"
   }
 }
+
+output "{{ .TerraformName }}" {
+  value = "${aws_api_gateway_domain_name.{{ .TerraformName }}.cloudfront_domain_name}"
+}

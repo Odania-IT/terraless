@@ -15,6 +15,8 @@ var lambdaFunctionsTemplate = `
 resource "aws_cloudwatch_log_group" "lambda-log-{{.FunctionName}}" {
   name = "/aws/lambda/{{ .ProjectName }}-{{.FunctionName}}"
   retention_in_days = 14
+
+  tags = "${merge(var.terraless-default-tags, map("FunctionName", "{{.FunctionName}}"))}"
 }
 
 resource "aws_lambda_function" "lambda-{{.FunctionName}}" {
@@ -33,6 +35,8 @@ resource "aws_lambda_function" "lambda-{{.FunctionName}}" {
     }
   }
   {{ end }}
+
+  tags = "${merge(var.terraless-default-tags, map("FunctionName", "{{.FunctionName}}"))}"
 }
 
 {{ if .AddApiGatewayPermission }}

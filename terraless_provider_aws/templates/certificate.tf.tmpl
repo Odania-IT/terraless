@@ -9,6 +9,8 @@ resource "aws_acm_certificate" "{{ .TerraformName }}" {
   ]
 
   provider = "aws.us-east"
+
+  tags = "${var.terraless-default-tags}"
 }
 
 resource "aws_route53_record" "{{ .TerraformName }}-validation" {

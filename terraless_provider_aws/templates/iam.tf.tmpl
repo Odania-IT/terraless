@@ -4,6 +4,8 @@ resource "aws_iam_role" "terraless-lambda-iam-role" {
   name = "terraless-lambda-iam-role"
 
   assume_role_policy = "${data.aws_iam_policy_document.terraless-lambda-assume-role.json}"
+
+  tags = "${var.terraless-default-tags}"
 }
 
 data "aws_iam_policy_document" "terraless-lambda-assume-role" {
