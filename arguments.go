@@ -34,6 +34,7 @@ var (
 	initCommand = app.Command("init", "Initialize Templates")
 	sessionCommand = app.Command("session", "Handle Provider sessions")
 	versionCommand = app.Command("version", "Version")
+	uploadCommand = app.Command("upload", "Upload")
 )
 
 func detectGlobalConfig() *string {

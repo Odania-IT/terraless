@@ -54,6 +54,9 @@ func main() {
 	case sessionCommand.FullCommand():
 		logrus.Debug("Handling Session Command")
 		stepPrepareSesssion(terralessData)
+	case uploadCommand.FullCommand():
+		logrus.Debug("Handling Upload Command")
+		stepUpload(terralessData)
 	default:
 		logrus.Debug("Invalid step")
 		kingpin.Usage()
@@ -116,6 +119,12 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 	for _, terralessProvider := range terralessProviders {
 		terralessProvider.PrepareSession(terralessData.Config)
 	}
+}
+
+func stepUpload(terralessData *schema.TerralessData) {
+	stepInitialize(terralessData)
+	stepPrepareSesssion(terralessData)
+	templates.ProcessUploads(*terralessData)
 }
 
 func deployTerraform(config schema.TerralessConfig, environment string, forceDeploy bool, terraformCommand string) {
