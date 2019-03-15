@@ -5,10 +5,33 @@ type TerralessActiveProvider struct {
 	Providers []TerralessProvider `yaml:"Providers"`
 }
 
+type TerralessAuthorizer struct {
+	AuthorizerType string   `yaml:"AuthorizerType"`
+	Type           string   `yaml:"Type"`
+	Name           string   `yaml:"Name"`
+	ProviderArns   []string `yaml:"ProviderArns"`
+
+	// only for rendering template
+	TerraformName string
+}
+
+type TerralessEndpoint struct {
+	Aliases     []string `yaml:"Aliases"`
+	Certificate string   `yaml:"Certificate"`
+	Domain      string   `yaml:"Domain"`
+	Type        string   `yaml:"Type"`
+
+	// only for rendering template
+	TerralessCertificate TerralessCertificate
+	TerraformName        string
+}
+
 type TerralessProjectConfig struct {
+	Authorizers     map[string]TerralessAuthorizer  `yaml:"Authorizers"`
 	ActiveProviders []TerralessActiveProvider       `yaml:"ActiveProviders"`
 	Backend         TerralessBackend                `yaml:"Backend"`
 	Certificates    map[string]TerralessCertificate `yaml:"Certificates"`
+	Endpoints       []TerralessEndpoint             `yaml:"Endpoints"`
 	Functions       map[string]TerralessFunction    `yaml:"Functions"`
 	Package         TerralessPackage                `yaml:"Package"`
 	ProjectName     string                          `yaml:"ProjectName"`

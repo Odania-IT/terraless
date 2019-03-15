@@ -14,7 +14,7 @@ require (
 	github.com/magiconair/properties v1.8.0
 	github.com/sirupsen/logrus v1.3.0
 	github.com/stretchr/testify v1.3.0
-	golang.org/x/net v0.0.0-20190301231341-16b79f2e4e95 // indirect
+	golang.org/x/net v0.0.0-20190301231341-16b79f2e4e95
 	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/yaml.v2 v2.2.2
 )

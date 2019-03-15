@@ -10,8 +10,10 @@ import (
 )
 
 type TerralessConfig struct {
+	Authorizers  map[string]TerralessAuthorizer
 	Backend      TerralessBackend
 	Certificates map[string]TerralessCertificate
+	Endpoints    []TerralessEndpoint
 	Functions    map[string]TerralessFunction
 	Package      TerralessPackage
 	ProjectName  string
@@ -38,7 +40,9 @@ func (cfg *TerralessConfig) applyFunctionDefaults() {
 
 func BuildTerralessConfig(globalCfg TerralessGlobalConfig, projectCfg TerralessProjectConfig, arguments Arguments) TerralessConfig {
 	result := TerralessConfig{
+		Authorizers:  projectCfg.Authorizers,
 		Certificates: map[string]TerralessCertificate{},
+		Endpoints:    projectCfg.Endpoints,
 		Functions:    projectCfg.Functions,
 		HasProvider:  map[string]bool{},
 		Package:      projectCfg.Package,

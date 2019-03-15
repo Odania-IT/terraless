@@ -8,36 +8,11 @@ resource "aws_api_gateway_rest_api" "terraless-api-gateway" {
   description = "Terraless Api Gateway for {{ .Config.ProjectName }}-{{ .Arguments.Environment }}"
 }
 
-# resource "aws_api_gateway_resource" "terraless-api-gateway-proxy" {
-#   rest_api_id = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
-#   parent_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.root_resource_id}"
-#   path_part   = "{proxy+}"
-# }
-# 
-# resource "aws_api_gateway_method" "terraless-api-gateway-proxy" {
-#   rest_api_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
-#   resource_id   = "${aws_api_gateway_resource.terraless-api-gateway-proxy.id}"
-#   http_method   = "ANY"
-#   authorization = "NONE"
-# }
-# 
-# resource "aws_api_gateway_method" "terraless-api-gateway-proxy-root" {
-#   rest_api_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
-#   resource_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.root_resource_id}"
-#   http_method   = "ANY"
-#   authorization = "NONE"
-# }
-
 resource "aws_api_gateway_deployment" "terraless-api-gateway-v1" {
   rest_api_id = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
   stage_name = "v1"
+  stage_description = "Deployed at {{ currentTime }}"
 }
-
-# resource "aws_api_gateway_stage" "terraless-api-gateway-v1" {
-#   deployment_id = "${aws_api_gateway_deployment.terraless-api-gateway-v1.id}"
-#   rest_api_id = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
-#   stage_name = "v1"
-# }
 
 `,
 }
@@ -58,7 +33,8 @@ resource "aws_api_gateway_method" "terraless-lambda-{{.FunctionName}}-{{.Idx}}" 
   rest_api_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
   resource_id   = "${aws_api_gateway_resource.terraless-lambda-{{.FunctionName}}-{{.ResourceNameForPath}}.id}"
   http_method   = "{{ .Method }}"
-  authorization = "NONE"
+  authorization = "{{ .Authorization }}"
+  authorizer_id = "{{ .AuthorizerId }}"
 }
 
 resource "aws_api_gateway_integration" "terraless-lambda-{{.FunctionName}}-{{.Idx}}" {

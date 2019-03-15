@@ -80,7 +80,7 @@ func stepDeploy(terralessData *schema.TerralessData) {
 			}
 		}
 
-		deploy(currentConfig, arguments.Environment, arguments.ForceDeploy, arguments.TerraformCommand)
+		deployTerraform(currentConfig, arguments.Environment, arguments.ForceDeploy, arguments.TerraformCommand)
 
 		if currentConfig.Package.SourceDir != "" {
 			logrus.Debugf("Executing after package hooks depending on runtime")
@@ -115,5 +115,32 @@ func stepInitialize(terralessData *schema.TerralessData) {
 func stepPrepareSesssion(terralessData *schema.TerralessData) {
 	for _, terralessProvider := range terralessProviders {
 		terralessProvider.PrepareSession(terralessData.Config)
+	}
+}
+
+func deployTerraform(config schema.TerralessConfig, environment string, forceDeploy bool, terraformCommand string) {
+	logrus.Info("Executing terraform init")
+	executeCommand(config.SourcePath, terraformCommand, []string{"init"}, false)
+	logrus.Info("Creating new terraform workspace")
+	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "new", config.ProjectName}, true)
+	logrus.Info("Selecting new terraform workspace")
+	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "select", config.ProjectName}, false)
+
+	logrus.Info("Executing terraform plan")
+	planArgs := []string{
+		"plan",
+		"-out",
+		"terraform.plan",
+		"-input=false",
+		"-var",
+		"environment=" + environment,
+	}
+	executeCommand(config.SourcePath, terraformCommand, planArgs, false)
+
+	if forceDeploy || checkApprove() {
+		logrus.Info("Deploying terraform plan")
+		executeCommand(config.SourcePath, terraformCommand, []string{"apply", "-input=false", "terraform.plan"}, false)
+	} else {
+		logrus.Info("Not deploying...")
 	}
 }

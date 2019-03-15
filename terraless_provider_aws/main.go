@@ -19,12 +19,14 @@ func awsTemplates(name string) string {
 
 func Provider() schema.Provider {
 	return schema.Provider{
-		CanHandle: canHandle,
-		PrepareSession: prepareSession,
-		ProcessUpload: processUpload,
+		CanHandle:                  canHandle,
+		PrepareSession:             prepareSession,
+		ProcessUpload:              processUpload,
+		RenderAuthorizerTemplates:  RenderAuthorizerTemplates,
 		RenderCertificateTemplates: RenderCertificateTemplates,
-		RenderFunctionTemplates: RenderFunctionTemplates,
-		RenderUploadTemplates: RenderUploadTemplates,
+		RenderEndpointTemplates:    RenderEndpointTemplates,
+		RenderFunctionTemplates:    RenderFunctionTemplates,
+		RenderUploadTemplates:      RenderUploadTemplates,
 	}
 }
 

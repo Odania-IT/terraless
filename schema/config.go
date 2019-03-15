@@ -2,10 +2,6 @@ package schema
 
 import "strings"
 
-type TerralessAuthorizer struct {
-	Type string `yaml:"Type"`
-}
-
 type TerralessBackend struct {
 	Data     map[string]string `yaml:"Data"`
 	Name     string            `yaml:"Name"`
@@ -48,16 +44,18 @@ type TerralessCors struct {
 var HttpMethods = []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "ANY"}
 
 type TerralessFunctionEvent struct {
-	Authorizer TerralessAuthorizer `yaml:"Authorizer"`
-	Arn        string              `yaml:"Arn"`
-	Cors       TerralessCors       `yaml:"Cors"`
-	Method     string              `yaml:"Method"`
-	Path       string              `yaml:"Path"`
-	Rate       string              `yaml:"Rate"`
-	Route      string              `yaml:"Route"`
-	Type       string              `yaml:"Type"`
+	Authorizer string        `yaml:"Authorizer"`
+	Arn        string        `yaml:"Arn"`
+	Cors       TerralessCors `yaml:"Cors"`
+	Method     string        `yaml:"Method"`
+	Path       string        `yaml:"Path"`
+	Rate       string        `yaml:"Rate"`
+	Route      string        `yaml:"Route"`
+	Type       string        `yaml:"Type"`
 
 	// only for rendering template
+	Authorization       string
+	AuthorizerId        string
 	FunctionName        string
 	Idx                 string
 	ProjectName         string
@@ -78,9 +76,9 @@ type TerralessFunction struct {
 
 	// only for rendering template
 	AddApiGatewayPermission bool
-	FunctionName      string
-	ProjectName       string
-	RenderEnvironment bool
+	FunctionName            string
+	ProjectName             string
+	RenderEnvironment       bool
 }
 
 type TerralessPackage struct {

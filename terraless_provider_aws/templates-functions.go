@@ -100,6 +100,18 @@ func RenderFunctionTemplates(resourceType string, functionEvents schema.Function
 			functionEvent.ProjectName = terralessData.Config.ProjectName
 			functionEvent.PathsRendered = pathsRendered
 			functionEvent.ResourceNameForPath = support.SanitizeString(functionEvent.Path)
+
+			// Authorization
+			if functionEvent.Authorizer == "" {
+				functionEvent.Authorization = "NONE"
+			} else {
+				authorizer := terralessData.Config.Authorizers[functionEvent.Authorizer]
+				functionEvent.Authorization = authorizer.AuthorizerType
+				authorizer.TerraformName = "terraless-authorizer-" + support.SanitizeString(authorizer.Name)
+				functionEvent.AuthorizerId = "${aws_api_gateway_authorizer." + authorizer.TerraformName + ".id}"
+			}
+
+			// Intergration Template
 			integrationTemplate := functionIntegrationTemplates[functionEvent.Type]
 
 			if integrationTemplate == "" {
