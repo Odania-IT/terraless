@@ -51,6 +51,12 @@ Also the Lambda@Edge to help with the resources can be automatically deployed. F
 * index.html as Default for "subfolders": This is helpful for static pages there you do not want the /sub/index.html in the url
 * /index.html as Default for "subfolders": This is helpful for Frameworks like Angular. It will redirect every "subfolder" to the index.html in the root.
 
+## Install
+
+You can download the executable for your system from the [Releases page](https://github.com/Odania-IT/terraless/releases)
+
+Currently it is available for Mac, Linux and Windows (AMD64).
+
 ## Configs
 
 Example Global Config: [examples/terraless.yml](examples/terraless.yml)
