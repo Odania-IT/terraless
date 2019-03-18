@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestTerralessFunctions_ConsolidateEventData(t *testing.T) {
+func TestTerralessFunctions_RenderCertificateTemplates(t *testing.T) {
 	// given
 	config := schema.TerralessConfig{
 		Certificates: map[string]schema.TerralessCertificate{
@@ -33,6 +33,8 @@ resource "aws_acm_certificate" "terraless-certificate-example-com" {
   ]
 
   provider = "aws.us-east"
+
+  tags = "${var.terraless-default-tags}"
 }
 
 resource "aws_route53_record" "terraless-certificate-example-com-validation" {
