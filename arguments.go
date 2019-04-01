@@ -12,12 +12,12 @@ import (
 
 const (
 	CODENAME = "Flying Eagle"
-	VERSION = "0.1.13"
+	VERSION  = "0.1.13"
 )
 
 var dir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
 var (
-	app    = kingpin.New("terraless", "Terraless cloud army swiss knife")
+	app        = kingpin.New("terraless", "Terraless cloud army swiss knife")
 	configFlag = app.Flag("config", "Project Config file").
 		Short('c').
 		Default(path.Join(dir, "terraless.yml")).
@@ -30,11 +30,15 @@ var (
 	noUpload         = app.Flag("no-upload", "Do not upload").Bool()
 	terraformCommand = app.Flag("terraform-command", "Terraform Command").Default("terraform").String()
 
-	deployCommand = app.Command("deploy", "Deploy")
-	initCommand = app.Command("init", "Initialize Templates")
+	// Commands
+	deployCommand  = app.Command("deploy", "Deploy")
+	initCommand    = app.Command("init", "Initialize Templates")
 	sessionCommand = app.Command("session", "Handle Provider sessions")
 	versionCommand = app.Command("version", "Version")
-	uploadCommand = app.Command("upload", "Upload")
+	uploadCommand  = app.Command("upload", "Upload")
+
+	// Deploy Command Options
+	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()
 )
 
 func detectGlobalConfig() *string {
@@ -62,6 +66,7 @@ func detectGlobalConfig() *string {
 }
 
 func parseArguments() (schema.Arguments, string) {
+
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
 	if globalConfig == nil {
@@ -69,14 +74,15 @@ func parseArguments() (schema.Arguments, string) {
 	}
 
 	arguments := &schema.Arguments{
-		Config:           *configFlag,
-		Environment:      *environment,
-		ForceDeploy:      *forceDeploy,
-		GlobalConfig:     *globalConfig,
-		LogLevel:         *logLevel,
-		NoDeploy:         *noDeploy,
-		NoUpload:         *noUpload,
-		TerraformCommand: *terraformCommand,
+		Config:               *configFlag,
+		Environment:          *environment,
+		ForceDeploy:          *forceDeploy,
+		GlobalConfig:         *globalConfig,
+		LogLevel:             *logLevel,
+		NoDeploy:             *noDeploy,
+		NoProviderGeneration: *deployNoProviderGeneration,
+		NoUpload:             *noUpload,
+		TerraformCommand:     *terraformCommand,
 	}
 
 	// Set log level

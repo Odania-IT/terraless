@@ -57,7 +57,10 @@ data "archive_file" "lambda-archive" {
 
 func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
 	config := terralessData.Config
-	renderTemplate(*terralessData, filepath.Join(config.SourcePath, "terraless-main.tf"), mainTfTemplate)
+
+	if !terralessData.Arguments.NoProviderGeneration {
+		renderTemplate(*terralessData, filepath.Join(config.SourcePath, "terraless-main.tf"), mainTfTemplate)
+	}
 
 	if len(config.Authorizers) > 0 {
 		logrus.Debug("Creating authorizer templates")
