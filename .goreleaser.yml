@@ -18,7 +18,10 @@ builds:
       - amd64
 dockers:
   - image_templates:
-      - odaniait/terraless
+      - "odaniait/terraless:{{ .Tag }}"
+      - "odaniait/terraless:v{{ .Major }}"
+      - "odaniait/terraless:v{{ .Major }}.{{ .Minor }}"
+      - odaniait/terraless:latest
 archive:
   wrap_in_directory: true
   format_overrides:
