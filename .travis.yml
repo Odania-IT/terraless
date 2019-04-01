@@ -6,20 +6,22 @@ env:
   - secure: E3uqy/QHzPdiuM3s0rNGTELWAI1Z/cKh2Gjlek56ECK/YLEM+TDcKE0u7Y4a0EH/Wyb0W/Fj5UBiO5pfmRA6zW6yusJyD2//xVieD8Tz5juZl1eUx6FI1aZJag19IFIfealg14qBgD4pNuIMvgAWFHRc/H27NJhxvapWOhi7p1AIx4A7ItJ0bwkQzTcRdYZwA9KUw73+BiU8HSQpmgVn/wIXzEg6Ao3UdExmpkGgLa5bhRsCbiWRpuAXOn0liZc3tk+o359CxH+MuNqSbyOluo3MrGvhOyC/22okVCXFn8/5dM0VB3NZg6bJGCdS39C73AzbhiI84eL1FDRJeBFoQVRuwsV9wEhYae9ux2exzbIokslJzhlLunCCrFZ6vELTwEfICL1xHsbO0C2KoDKzo8wxe2JVdbV4OC9jjz1eN7KtVDYdD2u+/ZEx1TElC8Gn1FpmrW69lTPNszRt99CJKfW8aBM3PMjQt7zfYG/wnP1sLcMYIjRHGsIbSyJKIA39e8NQALxIP2CA8o18UEMQEtUsF5DzZkU0bCRvdCo9zyfMP5AP0/STrHb+eABJPVphU/C8IAExq4PhxwfGMBZRKKC+yx7LY5n6kxj2t93JgPPQg7OKgFqjh8RDZumH2/oeMoHmQnNk+ocP0xmVIrDrydpSIKW4H1h83GsbbZEQg9I=
   - secure: aiiSVQu9rIdEiOX198gmx43rnJiMiJNqdF5h4XH7CICgJ7xd8TgkaPSjwcOzhGlkguDchPeshS0H5D7tbKc6r8oCMoeYVPfuJ3a0sYUHTdDb81oBUtsWdqrYkyYiJUmqBbGyyS1jwhXTGyqhDK0cxAqE8Lf5t2jQFYg838vlyBZLUG1Mt9/woHBOXwRMmgWRVhHbT4hVIUi5yCMp5A4qu//YXOgS362O9AVJM7P8qjqjNVBx9Ougt5m357zvhDiWZonvgbiccEGFjvulzYmykECeFwDtgz8xu60H7QLsQXgs3nodHbU3iNP7ToKAu8tyuoekolm07L5DH/mOfj1xKWQjIay/FrYtXaIv9Fxx27W+9sTOftikc4AfynoIcWmYZcD39k9vJDOzyVqGchA+U8EFAvTlxDrHdBkrtpdW3zUf0I09PwxM6k8GlkQ7qPJ3gJ/+crQCztJbMzfzJDy7+hQWphOL8Z/Y14/DLdiui+tv7Uk6FjKDDlNfbDt9tkQzq0sA5GV0S1//G+ZEy1vBI3/vJR3SUv2CqIcMv2nU7Y72uaCdMEgz/UwWHlJSk6rUPkAFIGpPkk86EcOh2RpZUAjwj2q+Ptn8/bqMh5MBNV9XAlV0KCNMH13U44LF3d2At184T69513Wu62i/3sTV5vJALa8XWwJrzAS2D5okh04=
 go:
-- 1.11.x
+  - 1.11.x
+services:
+  - docker
 install: true
 before_script:
-- go get github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
 script:
-- golangci-lint run
-- go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
+  - golangci-lint run
+  - go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
 after_success:
-- bash <(curl -s https://codecov.io/bash)
-- bash -c 'git checkout go.mod go.sum'
+  - bash <(curl -s https://codecov.io/bash)
+  - bash -c 'git checkout go.mod go.sum'
 deploy:
-- provider: script
-  skip_cleanup: true
-  script: curl -sL https://git.io/goreleaser | bash
-  on:
-    tags: true
-    condition: "$TRAVIS_OS_NAME = linux"
+  - provider: script
+    skip_cleanup: true
+    script: curl -sL https://git.io/goreleaser | bash
+    on:
+      tags: true
+      condition: "$TRAVIS_OS_NAME = linux"

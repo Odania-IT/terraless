@@ -16,6 +16,9 @@ builds:
       - windows
     goarch:
       - amd64
+dockers:
+  - image_templates:
+      - odaniait/terraless
 archive:
   wrap_in_directory: true
   format_overrides:

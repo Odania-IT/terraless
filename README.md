@@ -55,7 +55,10 @@ Also the Lambda@Edge to help with the resources can be automatically deployed. F
 
 You can download the executable for your system from the [Releases page](https://github.com/Odania-IT/terraless/releases)
 
-Currently it is available for Mac, Linux and Windows (AMD64).
+Currently it is available for Mac, Linux and Windows (AMD64). A Docker Image will also be created it is available on 
+[https://hub.docker.com/r/odaniait/terraless](https://hub.docker.com/r/odaniait/terraless)
+
+You can use the downloader script from [scripts/godownloader-terraless.sh](scripts/godownloader-terraless.sh)
 
 ## Configs
 
