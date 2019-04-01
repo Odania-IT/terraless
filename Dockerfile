@@ -14,5 +14,5 @@ USER terraless
 
 VOLUME /srv
 
-ENTRYPOINT ["/terraless"]
+ENTRYPOINT ["/bin/terraless"]
 CMD ["-?"]
