@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestTerralessFunctions_ConsolidateEventData(t *testing.T) {
+func TestFunctionsEvents_ConsolidateEventData(t *testing.T) {
 	// given
 	terralessData := schema.TerralessData{
 		TerralessProviders: []schema.Provider{},
