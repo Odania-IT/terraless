@@ -44,7 +44,7 @@ func lambdaAtEdgeZip(config schema.TerralessConfig) string {
 	targetFile := filepath.Join(config.TargetPath, "lambda-at-edge.zip")
 
 	info, _ := os.Stat(targetFile)
-	if info.Size() > 0 {
+	if info != nil && info.Size() > 0 {
 		err := os.Remove(targetFile)
 
 		if err != nil {

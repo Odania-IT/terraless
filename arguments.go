@@ -42,18 +42,17 @@ var (
 	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()
 )
 
-func detectGlobalConfig() string {
+func detectGlobalConfig(configFolders []string) string {
 	logrus.Info("Trying to detect global config")
-	configFolders := []string{
-		".terraless",
-		filepath.Join(".config", ".terraless"),
-		".aws",
-		filepath.Join(".config", "gcloud"),
-	}
-	usr, err := user.Current()
 
+	usr, err := user.Current()
 	if err != nil {
 		logrus.Fatal("Could not detect user home folder")
+	}
+
+	currentWorkingDirectory, err := os.Getwd()
+	if err != nil {
+		logrus.Fatal("Could not detect current directory")
 	}
 
 	for _, folder := range configFolders {
@@ -63,6 +62,12 @@ func detectGlobalConfig() string {
 			logrus.Infof("Found global config: %s\n", fullPath)
 			return fullPath
 		}
+	}
+
+	fullPath := filepath.Join(currentWorkingDirectory, "terraless.yml")
+	if _, err := os.Stat(fullPath); err == nil {
+		logrus.Infof("Found global config: %s\n", fullPath)
+		return fullPath
 	}
 
 	return ""
@@ -84,7 +89,13 @@ func parseArguments() (schema.Arguments, string) {
 	}
 
 	if arguments.GlobalConfig == "" {
-		arguments.GlobalConfig = detectGlobalConfig()
+		configFolders := []string{
+			".terraless",
+			filepath.Join(".config", ".terraless"),
+			".aws",
+			filepath.Join(".config", "gcloud"),
+		}
+		arguments.GlobalConfig = detectGlobalConfig(configFolders)
 	}
 
 	// Set log level
