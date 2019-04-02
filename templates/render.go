@@ -58,7 +58,7 @@ data "archive_file" "lambda-archive" {
 func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
 	config := terralessData.Config
 
-	if !terralessData.Arguments.NoProviderGeneration {
+	if !terralessData.Arguments.NoProviderGeneration && !terralessData.Config.Settings.NoProviderGeneration {
 		renderTemplate(*terralessData, filepath.Join(config.SourcePath, "terraless-main.tf"), mainTfTemplate)
 	}
 

@@ -20,7 +20,7 @@ var (
 	app        = kingpin.New("terraless", "Terraless cloud army swiss knife")
 	configFlag = app.Flag("config", "Project Config file").
 		Short('c').
-		Default(path.Join(dir, "terraless.yml")).
+		Default(path.Join(dir, "terraless-project.yml")).
 		String()
 	environment      = app.Flag("environment", "Environment").Short('e').Default("develop").String()
 	forceDeploy      = app.Flag("force-deploy", "Force deployment (Do not ask the user)").Bool()
@@ -33,6 +33,7 @@ var (
 	// Commands
 	deployCommand  = app.Command("deploy", "Deploy")
 	initCommand    = app.Command("init", "Initialize Templates")
+	infoCommand    = app.Command("info", "Display information")
 	sessionCommand = app.Command("session", "Handle Provider sessions")
 	versionCommand = app.Command("version", "Version")
 	uploadCommand  = app.Command("upload", "Upload")
@@ -41,7 +42,8 @@ var (
 	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()
 )
 
-func detectGlobalConfig() *string {
+func detectGlobalConfig() string {
+	logrus.Info("Trying to detect global config")
 	configFolders := []string{
 		".terraless",
 		filepath.Join(".config", ".terraless"),
@@ -58,20 +60,16 @@ func detectGlobalConfig() *string {
 		fullPath := filepath.Join(usr.HomeDir, folder, "terraless.yml")
 
 		if _, err := os.Stat(fullPath); err == nil {
-			return &fullPath
+			logrus.Infof("Found global config: %s\n", fullPath)
+			return fullPath
 		}
 	}
 
-	return nil
+	return ""
 }
 
 func parseArguments() (schema.Arguments, string) {
-
 	kingpin.MustParse(app.Parse(os.Args[1:]))
-
-	if globalConfig == nil {
-		globalConfig = detectGlobalConfig()
-	}
 
 	arguments := &schema.Arguments{
 		Config:               *configFlag,
@@ -83,6 +81,10 @@ func parseArguments() (schema.Arguments, string) {
 		NoProviderGeneration: *deployNoProviderGeneration,
 		NoUpload:             *noUpload,
 		TerraformCommand:     *terraformCommand,
+	}
+
+	if arguments.GlobalConfig == "" {
+		arguments.GlobalConfig = detectGlobalConfig()
 	}
 
 	// Set log level

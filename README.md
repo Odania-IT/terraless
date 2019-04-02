@@ -60,6 +60,10 @@ Currently it is available for Mac, Linux and Windows (AMD64). A Docker Image wil
 
 You can use the downloader script from [scripts/godownloader-terraless.sh](scripts/godownloader-terraless.sh)
 
+### Download Script
+
+    curl -s https://raw.githubusercontent.com/Odania-IT/terraless/master/scripts/godownloader-terraless.sh | bash -s --
+
 ## Configs
 
 Example Global Config: [examples/terraless.yml](examples/terraless.yml)

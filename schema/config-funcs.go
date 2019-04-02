@@ -20,8 +20,6 @@ func (team TerralessTeam) findProviderByName(providerName string) TerralessProvi
 		}
 	}
 
-	logrus.Fatalf("[Team: %s] Provider '%s' not found\n", team.Name, providerName)
-
 	return TerralessProvider{}
 }
 

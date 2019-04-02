@@ -1,6 +1,8 @@
 package schema
 
-import "strings"
+import (
+	"strings"
+)
 
 type TerralessBackend struct {
 	Data     map[string]string `yaml:"Data"`
@@ -121,15 +123,20 @@ type TerralessTeam struct {
 	Providers []TerralessProvider `yaml:"Providers"`
 }
 
+func getRoleAndNameFromProvider(name string) (string, string) {
+	parts := strings.Split(name, "-")
+	role := parts[len(parts)-1]
+	globalName := strings.Join(parts[:len(parts)-1], "-")
+
+	return globalName, role
+}
+
 func (profile TerralessProvider) is(name string) bool {
 	if profile.Name == name {
 		return true
 	}
 
-	parts := strings.Split(name, "-")
-	role := parts[len(parts)-1]
-	globalName := strings.Join(parts[:len(parts)-1], "-")
-
+	globalName, role := getRoleAndNameFromProvider(name)
 	if profile.Name == globalName {
 		for _, profileRole := range profile.Roles {
 			if profileRole == role {

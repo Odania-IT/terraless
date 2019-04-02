@@ -143,7 +143,7 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 	output, err := svc.AssumeRole(&sts.AssumeRoleInput{
 		DurationSeconds: aws.Int64(getDurationFromData(provider.Data, "session-duration", TargetSessionTokenDuration)),
 		RoleArn:         aws.String(arn),
-		RoleSessionName: aws.String(provider.Name),
+		RoleSessionName: aws.String(support.SanitizeSessionName(provider.Name)),
 	})
 	if err != nil {
 		logrus.Debugln(provider.Data)
