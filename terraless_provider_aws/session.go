@@ -3,6 +3,7 @@ package terraless_provider_aws
 import (
 	"fmt"
 	"github.com/Odania-IT/terraless/schema"
+	"github.com/Odania-IT/terraless/support"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -152,6 +153,7 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 
 	profileName := provider.Name
 	if provider.Data["profile"] != "" {
+		logrus.Debugf("Using profile name from data %s [Provider: %s]\n", provider.Data["profile"], provider.Name)
 		profileName = provider.Data["profile"]
 	}
 
@@ -275,7 +277,12 @@ func sessionValid(provider schema.TerralessProvider) (bool, error) {
 }
 
 func sessionForProfile(provider schema.TerralessProvider) *session.Session {
-	currentCredentials := credentials.NewSharedCredentials("", provider.Data["profile"])
+	profileName := provider.Data["profile"]
+	if profileName == "" {
+		profileName = provider.Name
+	}
+
+	currentCredentials := credentials.NewSharedCredentials("", profileName)
 	config := aws.Config{
 		Credentials: currentCredentials,
 		Region:      aws.String(provider.Data["region"]),

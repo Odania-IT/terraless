@@ -95,7 +95,7 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 					Name: "aws-default",
 					Data: map[string]string{
 						"accountId": "01234556678",
-						"profile": "aws-default",
+						"profile": "my-aws-profile",
 						"region": "eu-central-1",
 					},
 				},
@@ -104,7 +104,7 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 					Name: "aws-develop-developer",
 					Data: map[string]string{
 						"accountId": "01234556678",
-						"profile": "aws-develop-developer",
+						"profile": "my-aws-profile",
 						"region": "eu-central-1",
 					},
 				},

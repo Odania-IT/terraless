@@ -1,14 +1,8 @@
 package schema
 
-import (
-	"github.com/sirupsen/logrus"
-)
-
 func (team TerralessTeam) findProviderByName(providerName string) TerralessProvider {
 	for _, provider := range team.Providers {
 		if provider.is(providerName) {
-			provider.Data["profile"] = providerName
-
 			newProvider := TerralessProvider{
 				Data:  EnrichWithData(dataWithoutProfile(team.Data), provider.Data),
 				Name:  providerName,

@@ -118,6 +118,18 @@ func (cfg *TerralessConfig) buildCertificates(globalCfg TerralessGlobalConfig, p
 	}
 }
 
+func getProviderRole(provider TerralessProvider) string {
+	if provider.Data["role"] != "" {
+		return provider.Data["role"]
+	}
+
+	for _, role := range provider.Roles {
+		return role
+	}
+
+	return ""
+}
+
 func (cfg *TerralessConfig) buildProviders(globalCfg TerralessGlobalConfig, projectCfg TerralessProjectConfig, arguments Arguments) {
 	for _, activeProvider := range projectCfg.ActiveProviders {
 		for _, provider := range activeProvider.Providers {
@@ -132,6 +144,13 @@ func (cfg *TerralessConfig) buildProviders(globalCfg TerralessGlobalConfig, proj
 			if newProvider.Type == "global" {
 				logrus.Debugf("Processing global provider %s\n", provider.Name)
 				globalProvider := findGlobalProvider(activeProvider, provider, globalCfg, arguments)
+
+				// Make sure the profile name includes the role
+				role := getProviderRole(provider)
+				if !strings.HasSuffix(newProvider.Name, role) {
+					logrus.Debugf("Adding role suffix to provider name: %s [Role: %s]\n", newProvider.Name, role)
+					newProvider.Name += "-" + role
+				}
 
 				newProvider.Data = ProcessData(EnrichWithData(globalProvider.Data, newProvider.Data), arguments)
 				newProvider.Type = globalProvider.Type
@@ -198,6 +217,11 @@ func findGlobalProvider(activeProvider TerralessActiveProvider, provider Terrale
 
 	providerName := ProcessString(provider.Name, arguments)
 	providerByName := team.findProviderByName(providerName)
+
+	if providerByName.Name == "" {
+		logrus.Fatalf("[Team: %s] Provider '%s' not found\n", team.Name, providerName)
+	}
+
 	return TerralessProvider{
 		Data:  EnrichWithData(dataWithoutProfile(team.Data), providerByName.Data),
 		Name:  providerByName.Name,

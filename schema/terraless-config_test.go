@@ -206,7 +206,6 @@ func TestTerralessConfig_BuildTerralessConfig_ProjectConfigWithGlobalProvider(t 
 				Type: "aws",
 				Data: map[string]string{
 					"dummyData": "dummyValue",
-					"profile": "myTeam-myEnvironment-myRole",
 				},
 			},
 			"myTeam-myEnvironment-mySecondRole": {
@@ -308,7 +307,6 @@ func TestTerralessConfig_BuildTerralessConfig_BackendWithProvider(t *testing.T) 
 				Type: "dummy",
 				Data: map[string]string{
 					"alias": "backend",
-					"profile": "dummy-provider",
 					"role": "provider",
 					"teamData": "teamValue",
 				},
@@ -426,7 +424,6 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackendWithProvider(t *testi
 				Name: "dummy-provider",
 				Data: map[string]string{
 					"alias": "backend",
-					"profile": "dummy-provider",
 					"role": "provider",
 					"teamKey": "teamValue",
 				},
