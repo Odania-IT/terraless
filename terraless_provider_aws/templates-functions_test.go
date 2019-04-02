@@ -88,5 +88,5 @@ func TestTemplatesFunctions_RenderFunctionTemplates_SqsEvent(t *testing.T) {
 	buffer = RenderFunctionTemplates("aws", functionEvents, &terralessData, buffer)
 
 	// then
-	assert.Contains(t, buffer.String(), `## Terraless sqs`)
+	assert.Contains(t, buffer.String(), `# Function DummyProjectName SpecificFunction EventKey: 0`)
 }
