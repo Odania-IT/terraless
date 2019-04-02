@@ -20,7 +20,7 @@ func SanitizeString(val string) string {
 }
 
 func SanitizeSessionName(val string) string {
-	re := regexp.MustCompile("[^\\w+=,.@-]")
+	re := regexp.MustCompile(`[^\w+=,.@-]`)
 	return re.ReplaceAllString(val, "-")
 }
 
