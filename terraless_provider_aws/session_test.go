@@ -36,5 +36,5 @@ func TestSession_SessionValid(t *testing.T) {
 
 	// then
 	assert.False(t, valid)
-	assert.Equal(t, "SharedCredsLoad: failed to get profile", err.Error())
+	assert.Contains(t, err.Error(), "SharedCredsLoad: failed to")
 }
