@@ -3,6 +3,7 @@ package support
 import (
 	"bytes"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -19,4 +20,25 @@ func WriteToFile(targetFileName string, buffer bytes.Buffer) {
 	}
 
 	_ = targetFile.Close()
+}
+
+
+func WriteToFileIfEmpty(file string, data string) {
+	_, err := os.Stat(file)
+
+	if err != nil {
+		buffer := bytes.Buffer{}
+		buffer.WriteString(data)
+		WriteToFile(file, buffer)
+	}
+}
+
+func ReadFile(file string) string {
+	content, err := ioutil.ReadFile(file)
+
+	if err != nil {
+		logrus.Fatalf("Could not read file %s\n", file)
+	}
+
+	return string(content)
 }
