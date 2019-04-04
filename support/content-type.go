@@ -93,11 +93,11 @@ func DetectContentType(fileName string) string {
 		return "text/x-lua"
 	}
 
-	if extension == ".pl" {
+	if extension == ".pl" || extension == ".perl" {
 		return "text/x-perl"
 	}
 
-	if extension == ".py" {
+	if extension == ".py" || extension == ".python" {
 		return "application/x-python"
 	}
 
@@ -260,7 +260,7 @@ func DetectContentType(fileName string) string {
 	}
 
 	txts := []string{
-		".txt", ".php", ".rb", ".lua", ".perl", ".python", ".py", ".rtf", ".tcl", ".log",
+		".txt", ".rb", ".log",
 	}
 	for _, txtType := range txts {
 		if extension == txtType {

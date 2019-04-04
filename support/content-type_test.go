@@ -54,6 +54,7 @@ func TestTerralessSupport_DetectContentType_CommonTypes(t *testing.T) {
 		"/tmp/asd.swf": "application/x-shockwave-flash",
 		"/tmp/asd.crx": "application/x-chrome-extension",
 		"/tmp/asd.css": "text/css",
+		"/tmp/asd.xml": "text/xml; charset=utf-8",
 	}
 
 	for fileName, expectedContentType := range properties {
