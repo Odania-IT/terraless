@@ -48,7 +48,7 @@ func (pw AwsProfileWriter) lockAndWriteAwsCredentials(credentials sts.Credential
 
 func (pw AwsProfileWriter) writeAwsCredentials(credentials sts.Credentials, targetProfile string) {
 	logrus.Debugf("Loading credentials file %s\n", pw.credentialsFile)
-	support.WriteToFileIfEmpty(pw.credentialsFile, "[default]")
+	support.WriteToFileIfNotExists(pw.credentialsFile, "[default]")
 	cfg, err := ini.Load(pw.credentialsFile)
 
 	if err != nil {
@@ -84,7 +84,7 @@ func (pw AwsProfileWriter) writeAwsCredentials(credentials sts.Credentials, targ
 
 func (pw AwsProfileWriter) writeAwsConfig(region string, targetProfile string) {
 	logrus.Debugf("Loading config file %s\n", pw.awsConfigFile)
-	support.WriteToFileIfEmpty(pw.awsConfigFile, "[default]")
+	support.WriteToFileIfNotExists(pw.awsConfigFile, "[default]")
 	cfg, err := ini.Load(pw.awsConfigFile)
 
 	if err != nil {

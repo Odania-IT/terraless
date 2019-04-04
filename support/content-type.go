@@ -225,7 +225,7 @@ func DetectContentType(fileName string) string {
 		return "video/x-matroska"
 	}
 
-	if extension == ".jar" || extension == ".apk" {
+	if extension == ".jar" {
 		return "application/jar"
 	}
 

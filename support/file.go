@@ -23,7 +23,7 @@ func WriteToFile(targetFileName string, buffer bytes.Buffer) {
 }
 
 
-func WriteToFileIfEmpty(file string, data string) {
+func WriteToFileIfNotExists(file string, data string) {
 	_, err := os.Stat(file)
 
 	if err != nil {
