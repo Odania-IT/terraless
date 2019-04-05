@@ -60,6 +60,9 @@ func TestTerralessSchema_EnrichWithData_ProcessString(t *testing.T) {
 	// given
 	arguments := Arguments{
 		Environment: "develop",
+		Variables: map[string]string{
+			"command": "123",
+		},
 	}
 	settings := TerralessSettings{
 		Variables: map[string]string{
@@ -76,6 +79,7 @@ func TestTerralessSchema_EnrichWithData_ProcessString(t *testing.T) {
 	assert.Equal(t, "asd-w", ProcessString("${test1}-w", arguments, settings))
 	assert.Equal(t, "bse-develop", ProcessString("${test2}-${environment}", arguments, settings))
 	assert.Equal(t, "asd-bse", ProcessString("${test1}-${test2}", arguments, settings))
+	assert.Equal(t, "123-bse", ProcessString("${command}-${test2}", arguments, settings))
 }
 
 func TestTerralessSchema_EnrichWithData_ProcessData(t *testing.T) {

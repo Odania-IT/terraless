@@ -41,6 +41,7 @@ func main() {
 
 	terralessData := config.NewTerralessData(arguments, detectTerralessProviders())
 	currentConfig := terralessData.Config
+	currentConfig.Settings.Variables = schema.EnrichWithData(currentConfig.Settings.Variables, arguments.Variables)
 
 	logrus.Debugf("Active Providers in Config: %d\n", len(currentConfig.Providers))
 
@@ -71,6 +72,11 @@ func main() {
 			allProviders = append(allProviders, provider.Name)
 		}
 		fmt.Printf("Providers: %s\n", strings.Join(allProviders, ", "))
+
+		fmt.Println("Variables:")
+		for key, val := range terralessData.Config.Settings.Variables {
+			fmt.Printf("- %s: %s\n", key, val)
+		}
 	default:
 		logrus.Debug("Invalid step")
 		kingpin.Usage()

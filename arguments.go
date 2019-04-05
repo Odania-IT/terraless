@@ -29,6 +29,7 @@ var (
 	noDeploy         = app.Flag("no-deploy", "Do not execute deploy").Bool()
 	noUpload         = app.Flag("no-upload", "Do not upload").Bool()
 	terraformCommand = app.Flag("terraform-command", "Terraform Command").Default("terraform").String()
+	variables        = app.Flag("var", "Variable").StringMap()
 
 	// Commands
 	deployCommand  = app.Command("deploy", "Deploy")
@@ -86,6 +87,7 @@ func parseArguments() (schema.Arguments, string) {
 		NoProviderGeneration: *deployNoProviderGeneration,
 		NoUpload:             *noUpload,
 		TerraformCommand:     *terraformCommand,
+		Variables:            *variables,
 	}
 
 	if arguments.GlobalConfig == "" {

@@ -10,4 +10,5 @@ type Arguments struct {
 	NoProviderGeneration bool
 	NoUpload             bool
 	TerraformCommand     string
+	Variables            map[string]string
 }
