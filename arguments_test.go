@@ -24,3 +24,19 @@ func TestArguments_DetectGlobalConfig(t *testing.T) {
 
 	assert.Equal(t, path.Join(examplesDir, "terraless.yml"), configFile)
 }
+
+func TestArguments_ParseArguments(t *testing.T) {
+	arguments := []string{
+		"-c",
+		"/dummy/test.yml",
+		"-e",
+		"test",
+		"info",
+	}
+
+	args, kingpinResult := parseArguments(arguments)
+
+	assert.Equal(t, "info", kingpinResult)
+	assert.Equal(t, "/dummy/test.yml", args.Config)
+	assert.Equal(t, "test", args.Environment)
+}

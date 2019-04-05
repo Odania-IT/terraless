@@ -32,7 +32,7 @@ func main() {
 	terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
 
 	logrus.Info("Running terraless")
-	arguments, kingpinResult := parseArguments()
+	arguments, kingpinResult := parseArguments(os.Args[1:])
 
 	if kingpinResult == versionCommand.FullCommand() {
 		versionInfo()

@@ -74,8 +74,8 @@ func detectGlobalConfig(configFolders []string) string {
 	return ""
 }
 
-func parseArguments() (schema.Arguments, string) {
-	kingpin.MustParse(app.Parse(os.Args[1:]))
+func parseArguments(args []string) (schema.Arguments, string) {
+	kingpin.MustParse(app.Parse(args))
 
 	arguments := &schema.Arguments{
 		Config:               *configFlag,
@@ -104,7 +104,7 @@ func parseArguments() (schema.Arguments, string) {
 	level, _ := logrus.ParseLevel(arguments.LogLevel)
 	logrus.SetLevel(level)
 
-	kingpinResult := kingpin.MustParse(app.Parse(os.Args[1:]))
+	kingpinResult := kingpin.MustParse(app.Parse(args))
 
 	return *arguments, kingpinResult
 }
