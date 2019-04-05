@@ -106,3 +106,11 @@ region = eu-central-1
 	data := support.ReadFile(testLockFile)
 	assert.Equal(t, data, "")
 }
+
+func TestProfileWriter_GetCredentialsFile(t *testing.T) {
+	assert.Contains(t, getCredentialsFile(), "/.aws/credentials")
+}
+
+func TestProfileWriter_GetAwsConfigFile(t *testing.T) {
+	assert.Contains(t, getAwsConfigFile(), "/.aws/config")
+}
