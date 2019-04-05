@@ -2,9 +2,21 @@ package templates
 
 import (
 	"bytes"
+	"github.com/Odania-IT/terraless/schema"
 	"github.com/magiconair/properties/assert"
 	"testing"
 )
+
+func TestTerralessTemplates_RenderTemplateToBuffer_Render(t *testing.T) {
+	// given
+	terralessData := schema.TerralessData{}
+
+	// when
+	buffer := Render(&terralessData, bytes.Buffer{})
+
+	// then
+	assert.Equal(t, buffer.String(), "")
+}
 
 func TestTerralessTemplates_RenderTemplateToBuffer_Simple(t *testing.T) {
 	// given

@@ -40,6 +40,11 @@ func main() {
 	}
 
 	terralessData := config.NewTerralessData(arguments, detectTerralessProviders())
+	processCommands(terralessData, kingpinResult)
+}
+
+func processCommands(terralessData *schema.TerralessData, kingpinResult string) {
+	arguments := terralessData.Arguments
 	currentConfig := terralessData.Config
 	currentConfig.Settings.Variables = schema.EnrichWithData(currentConfig.Settings.Variables, arguments.Variables)
 
