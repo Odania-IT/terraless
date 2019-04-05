@@ -10,6 +10,7 @@ import (
 	"github.com/Odania-IT/terraless/terraless_provider_aws"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -123,14 +124,24 @@ func stepDeploy(terralessData *schema.TerralessData) {
 func stepInitialize(terralessData *schema.TerralessData) {
 	buffer := bytes.Buffer{}
 	buffer = templates.Render(terralessData, buffer)
+	targetFileName := filepath.Join(terralessData.Config.SourcePath, "terraless-resources.tf")
 
 	if buffer.Len() == 0 {
 		logrus.Debug("Nothing to write to terraless-resources.tf")
+
+		// Remove terraless-resources.tf if it exists
+		if _, err := os.Stat(targetFileName); err == nil {
+			err := os.Remove(targetFileName)
+
+			if err != nil {
+				logrus.Fatal("Failed to remove terraless-resources.tf")
+			}
+		}
+
 		return
 	}
 
 	// Writing buffer to file
-	targetFileName := filepath.Join(terralessData.Config.SourcePath, "terraless-resources.tf")
 	logrus.Debugf("Writing file %s\n", targetFileName)
 
 	finalBuffer := bytes.Buffer{}

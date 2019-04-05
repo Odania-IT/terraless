@@ -46,14 +46,15 @@ type TerralessCors struct {
 var HttpMethods = []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "ANY"}
 
 type TerralessFunctionEvent struct {
-	Authorizer string        `yaml:"Authorizer"`
-	Arn        string        `yaml:"Arn"`
-	Cors       TerralessCors `yaml:"Cors"`
-	Method     string        `yaml:"Method"`
-	Path       string        `yaml:"Path"`
-	Rate       string        `yaml:"Rate"`
-	Route      string        `yaml:"Route"`
-	Type       string        `yaml:"Type"`
+	Authorizer string            `yaml:"Authorizer"`
+	Arn        string            `yaml:"Arn"`
+	Cors       TerralessCors     `yaml:"Cors"`
+	Event      map[string]string `yaml:"Event"`
+	Method     string            `yaml:"Method"`
+	Path       string            `yaml:"Path"`
+	Rate       string            `yaml:"Rate"`
+	Route      string            `yaml:"Route"`
+	Type       string            `yaml:"Type"`
 
 	// only for rendering template
 	Authorization       string

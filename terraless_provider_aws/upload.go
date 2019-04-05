@@ -20,7 +20,7 @@ func processUpload(terralessData schema.TerralessData, upload schema.TerralessUp
 		return
 	}
 
-	provider := config.Providers[schema.ProcessString(upload.Provider, terralessData.Arguments)]
+	provider := config.Providers[schema.ProcessString(upload.Provider, terralessData.Arguments, terralessData.Config.Settings)]
 	currentCredentials := credentials.NewSharedCredentials("", provider.Data["profile"])
 
 	sess, err := session.NewSession(&aws.Config{

@@ -55,6 +55,12 @@ func detectGlobalConfig(configFolders []string) string {
 		logrus.Fatal("Could not detect current directory")
 	}
 
+	fullPath := filepath.Join(currentWorkingDirectory, "terraless.yml")
+	if _, err := os.Stat(fullPath); err == nil {
+		logrus.Infof("Found global config: %s\n", fullPath)
+		return fullPath
+	}
+
 	for _, folder := range configFolders {
 		fullPath := filepath.Join(usr.HomeDir, folder, "terraless.yml")
 
@@ -62,12 +68,6 @@ func detectGlobalConfig(configFolders []string) string {
 			logrus.Infof("Found global config: %s\n", fullPath)
 			return fullPath
 		}
-	}
-
-	fullPath := filepath.Join(currentWorkingDirectory, "terraless.yml")
-	if _, err := os.Stat(fullPath); err == nil {
-		logrus.Infof("Found global config: %s\n", fullPath)
-		return fullPath
 	}
 
 	return ""

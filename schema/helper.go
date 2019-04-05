@@ -19,16 +19,28 @@ func EnrichWithData(data map[string]string, override map[string]string) map[stri
 	return result
 }
 
-func ProcessString(check string, arguments Arguments) string {
-	r, _ := regexp.Compile(string(`\$\{[a-z]+\}`))
-	matches := r.FindStringSubmatch(check)
+func ProcessString(check string, arguments Arguments, settings TerralessSettings) string {
+	r, _ := regexp.Compile(string(`\$\{[a-zA-Z0-9]+\}`))
+	matches := r.FindAllString(check, -1)
 
 	if len(matches) > 0 {
 		for _, match := range matches {
 			if "${environment}" == match {
 				check = strings.Replace(check, match, arguments.Environment, -1)
 			} else {
-				logrus.Fatal("Not implemented! Currently only environment can be replaced!")
+				found := false
+
+				for key, val := range settings.Variables {
+					str := "${" + key + "}"
+					if str == match {
+						check = strings.Replace(check, match, val, -1)
+						found = true
+					}
+				}
+
+				if !found {
+					logrus.Fatalf("Variable %s not found!\n", match)
+				}
 			}
 		}
 	}
@@ -36,9 +48,9 @@ func ProcessString(check string, arguments Arguments) string {
 	return check
 }
 
-func ProcessData(data map[string]string, arguments Arguments) map[string]string {
+func ProcessData(data map[string]string, arguments Arguments, settings TerralessSettings) map[string]string {
 	for key, val := range data {
-		data[key] = ProcessString(val, arguments)
+		data[key] = ProcessString(val, arguments, settings)
 	}
 
 	return data

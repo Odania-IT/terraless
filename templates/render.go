@@ -124,6 +124,8 @@ func renderTemplate(terralessData schema.TerralessData, targetFileName string, t
 
 			if data["profile"] != "" {
 				result["profile"] = data["profile"]
+			} else {
+				result["profile"] = profileName
 			}
 
 			if data["region"] != "" {

@@ -46,7 +46,7 @@ func BuildTerralessConfig(globalCfg TerralessGlobalConfig, projectCfg TerralessP
 		Functions:    projectCfg.Functions,
 		HasProvider:  map[string]bool{},
 		Package:      projectCfg.Package,
-		ProjectName:  ProcessString(projectCfg.ProjectName, arguments),
+		ProjectName:  ProcessString(projectCfg.ProjectName, arguments, projectCfg.Settings),
 		Providers:    map[string]TerralessProvider{},
 		Settings:     projectCfg.Settings,
 		SourcePath:   projectCfg.SourcePath,
@@ -87,10 +87,10 @@ func (cfg *TerralessConfig) buildBackend(globalCfg TerralessGlobalConfig, projec
 
 	logrus.Debug("Building terraless backend")
 	cfg.Backend = TerralessBackend{
-		Data:     ProcessData(projectCfg.Backend.Data, arguments),
-		Name:     ProcessString(projectCfg.Backend.Name, arguments),
-		Provider: ProcessString(projectCfg.Backend.Provider, arguments),
-		Type:     ProcessString(projectCfg.Backend.Type, arguments),
+		Data:     ProcessData(projectCfg.Backend.Data, arguments, projectCfg.Settings),
+		Name:     ProcessString(projectCfg.Backend.Name, arguments, projectCfg.Settings),
+		Provider: ProcessString(projectCfg.Backend.Provider, arguments, projectCfg.Settings),
+		Type:     ProcessString(projectCfg.Backend.Type, arguments, projectCfg.Settings),
 	}
 
 	if cfg.Backend.Type == "global" {
@@ -98,8 +98,8 @@ func (cfg *TerralessConfig) buildBackend(globalCfg TerralessGlobalConfig, projec
 		for _, globalBackend := range globalCfg.Backends {
 			if globalBackend.Name == cfg.Backend.Name {
 				cfg.Backend.Type = globalBackend.Type
-				cfg.Backend.Data = ProcessData(EnrichWithData(cfg.Backend.Data, globalBackend.Data), arguments)
-				cfg.Backend.Provider = ProcessString(globalBackend.Provider, arguments)
+				cfg.Backend.Data = ProcessData(EnrichWithData(cfg.Backend.Data, globalBackend.Data), arguments, projectCfg.Settings)
+				cfg.Backend.Provider = ProcessString(globalBackend.Provider, arguments, projectCfg.Settings)
 
 				return
 			}
@@ -136,14 +136,14 @@ func (cfg *TerralessConfig) buildProviders(globalCfg TerralessGlobalConfig, proj
 			team := globalCfg.findTeamByName(activeProvider.Team)
 
 			newProvider := TerralessProvider{
-				Data: ProcessData(EnrichWithData(dataWithoutProfile(team.Data), provider.Data), arguments),
-				Name: ProcessString(provider.Name, arguments),
-				Type: ProcessString(provider.Type, arguments),
+				Data: ProcessData(EnrichWithData(dataWithoutProfile(team.Data), provider.Data), arguments, projectCfg.Settings),
+				Name: ProcessString(provider.Name, arguments, projectCfg.Settings),
+				Type: ProcessString(provider.Type, arguments, projectCfg.Settings),
 			}
 
 			if newProvider.Type == "global" {
 				logrus.Debugf("Processing global provider %s\n", provider.Name)
-				globalProvider := findGlobalProvider(activeProvider, provider, globalCfg, arguments)
+				globalProvider := findGlobalProvider(activeProvider, provider, globalCfg, arguments, projectCfg.Settings)
 
 				// Make sure the profile name includes the role
 				role := getProviderRole(provider)
@@ -152,7 +152,7 @@ func (cfg *TerralessConfig) buildProviders(globalCfg TerralessGlobalConfig, proj
 					newProvider.Name += "-" + role
 				}
 
-				newProvider.Data = ProcessData(EnrichWithData(globalProvider.Data, newProvider.Data), arguments)
+				newProvider.Data = ProcessData(EnrichWithData(globalProvider.Data, newProvider.Data), arguments, projectCfg.Settings)
 				newProvider.Type = globalProvider.Type
 			}
 
@@ -165,17 +165,17 @@ func (cfg *TerralessConfig) buildUploads(globalCfg TerralessGlobalConfig, projec
 	for _, upload := range projectCfg.Uploads {
 		logrus.Debugf("Processing upload %s\n", upload.Type)
 		newUpload := TerralessUpload{
-			Bucket:           ProcessString(upload.Bucket, arguments),
+			Bucket:           ProcessString(upload.Bucket, arguments, projectCfg.Settings),
 			Certificate:      upload.Certificate,
 			Cloudfront:       upload.Cloudfront,
-			LambdaAtEdgeFile: ProcessString(upload.LambdaAtEdgeFile, arguments),
+			LambdaAtEdgeFile: ProcessString(upload.LambdaAtEdgeFile, arguments, projectCfg.Settings),
 			OwnCertificate:   upload.OwnCertificate,
-			Provider:         ProcessString(upload.Provider, arguments),
-			ProjectName:      ProcessString(upload.ProjectName, arguments),
-			Region:           ProcessString(upload.Region, arguments),
-			Source:           ProcessString(upload.Source, arguments),
-			Target:           ProcessString(upload.Target, arguments),
-			Type:             ProcessString(upload.Type, arguments),
+			Provider:         ProcessString(upload.Provider, arguments, projectCfg.Settings),
+			ProjectName:      ProcessString(upload.ProjectName, arguments, projectCfg.Settings),
+			Region:           ProcessString(upload.Region, arguments, projectCfg.Settings),
+			Source:           ProcessString(upload.Source, arguments, projectCfg.Settings),
+			Target:           ProcessString(upload.Target, arguments, projectCfg.Settings),
+			Type:             ProcessString(upload.Type, arguments, projectCfg.Settings),
 		}
 
 		cfg.Uploads = append(cfg.Uploads, newUpload)
@@ -208,14 +208,14 @@ func (cfg *TerralessConfig) setProviderForBackend(globalCfg TerralessGlobalConfi
 	logrus.Fatalf("Could not set provider for Backend '%s' [Provider: %s]\n", cfg.Backend, cfg.Backend.Provider)
 }
 
-func findGlobalProvider(activeProvider TerralessActiveProvider, provider TerralessProvider, globalCfg TerralessGlobalConfig, arguments Arguments) TerralessProvider {
+func findGlobalProvider(activeProvider TerralessActiveProvider, provider TerralessProvider, globalCfg TerralessGlobalConfig, arguments Arguments, settings TerralessSettings) TerralessProvider {
 	team := globalCfg.findTeamByName(activeProvider.Team)
 
 	if team.Name == "" {
 		logrus.Fatalf("Team '%s' not found in global config\n", activeProvider.Team)
 	}
 
-	providerName := ProcessString(provider.Name, arguments)
+	providerName := ProcessString(provider.Name, arguments, settings)
 	providerByName := team.findProviderByName(providerName)
 
 	if providerByName.Name == "" {
