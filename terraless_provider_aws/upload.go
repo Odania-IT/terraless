@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 )
 
-var uploadFileFunc = addFileToS3
+var uploadFileFunc = s3Upload
 func processUpload(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
 	config := terralessData.Config
 	if upload.Type != "s3" {
@@ -51,7 +51,7 @@ func recursiveUpload(sourceDir string, targetPrefix string, bucketName string, s
 			logrus.Debugf("Processing directory %s", targetFile)
 			result = append(result, recursiveUpload(filename, targetFile, bucketName, svc)...)
 		} else {
-			err = uploadFileFunc(svc, bucketName, filename, targetFile)
+			err = addFileToS3(svc, bucketName, filename, targetFile)
 			if err != nil {
 				logrus.Fatalf("Failed uploading file %s to s3 bucket %s\n", targetFile, bucketName)
 			}
@@ -88,7 +88,7 @@ func addFileToS3(svc *s3manager.Uploader, bucket string, filename string, target
 	// Config settings: this is where you choose the bucket, filename, content-type etc.
 	// of the file you're uploading.
 	contentType := support.DetectContentType(filename)
-	uploadResult, err := svc.Upload(&s3manager.UploadInput{
+	uploadResult, err := uploadFileFunc(svc, s3manager.UploadInput{
 		Bucket:      aws.String(bucket),
 		Key:         aws.String(targetFile),
 		ACL:         aws.String("private"),
@@ -102,4 +102,8 @@ func addFileToS3(svc *s3manager.Uploader, bucket string, filename string, target
 
 	logrus.Debugf("Successfully uploaded %s to %s [Content-Type: %s]\n", filename, uploadResult.Location, contentType)
 	return err
+}
+
+func s3Upload(svc *s3manager.Uploader, uploadInput s3manager.UploadInput) (*s3manager.UploadOutput, error) {
+	return svc.Upload(&uploadInput)
 }

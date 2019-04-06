@@ -9,9 +9,12 @@ import (
 )
 
 var uploadedFiles int
-func uploadFileMock(svc *s3manager.Uploader, bucket string, filename string, targetFile string) error {
+func uploadFileMock(svc *s3manager.Uploader, uploadInput s3manager.UploadInput) (*s3manager.UploadOutput, error) {
 	uploadedFiles += 1
-	return nil
+	response := s3manager.UploadOutput{
+		Location: "only-mock",
+	}
+	return &response, nil
 }
 
 func TestTemplatesFunctions_RecursiveUpload(t *testing.T) {
