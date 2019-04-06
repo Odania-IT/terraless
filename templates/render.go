@@ -108,36 +108,39 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 	return buffer
 }
 
+func awsProviderKeys(data map[string]string, profileName string) map[string]string {
+	result := map[string]string{}
+
+	if data["alias"] != "" {
+		result["alias"] = data["alias"]
+	}
+
+	if data["profile"] != "" {
+		result["profile"] = data["profile"]
+	} else {
+		result["profile"] = profileName
+	}
+
+	if data["region"] != "" {
+		result["region"] = data["region"]
+	}
+
+	return result
+}
+
+func providerPresent(hasProvider map[string]bool, key string) bool {
+	return hasProvider[key]
+}
+
 func renderTemplate(terralessData schema.TerralessData, targetFileName string, tpl string) {
 	targetFile, err := os.Create(targetFileName)
 	if err != nil {
 		logrus.Fatal("Failed creating file: ", filepath.Base(targetFileName), err)
 	}
 
-	tmpl := template.Must(template.New(filepath.Base(targetFileName)).Funcs(template.FuncMap{
-		"awsProviderKeys": func(data map[string]string, profileName string) map[string]string {
-			result := map[string]string{}
-
-			if data["alias"] != "" {
-				result["alias"] = data["alias"]
-			}
-
-			if data["profile"] != "" {
-				result["profile"] = data["profile"]
-			} else {
-				result["profile"] = profileName
-			}
-
-			if data["region"] != "" {
-				result["region"] = data["region"]
-			}
-
-			return result
-		},
-		"providerPresent": func(hasProvider map[string]bool, key string) bool {
-			return hasProvider[key]
-		},
-	}).Parse(tpl))
+	tmpl := template.Must(template.New(filepath.Base(targetFileName)).
+		Funcs(template.FuncMap{"awsProviderKeys": awsProviderKeys, "providerPresent": providerPresent}).
+		Parse(tpl))
 	err = tmpl.Execute(targetFile, terralessData)
 
 	if err != nil {
