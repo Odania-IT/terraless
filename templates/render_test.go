@@ -9,13 +9,54 @@ import (
 
 func TestTerralessTemplates_RenderTemplateToBuffer_Render(t *testing.T) {
 	// given
-	terralessData := schema.TerralessData{}
+	terralessData := schema.TerralessData{
+		Config: schema.TerralessConfig{
+			Authorizers: map[string]schema.TerralessAuthorizer{
+				"auth": {
+					Type: "dummy",
+				},
+			},
+			Certificates: map[string]schema.TerralessCertificate{
+				"cert": {
+					Type: "dummy",
+				},
+			},
+			Endpoints: []schema.TerralessEndpoint{
+				{
+					Type: "dummy",
+				},
+			},
+			Functions: map[string]schema.TerralessFunction{
+				"func": {
+					Type: "dummy",
+				},
+			},
+			Package: schema.TerralessPackage{
+				SourceDir: "dummy-source",
+			},
+			Uploads: []schema.TerralessUpload{
+				{
+					Type: "dummy",
+				},
+			},
+		},
+	}
 
 	// when
 	buffer := Render(&terralessData, bytes.Buffer{})
 
 	// then
-	assert.Equal(t, buffer.String(), "")
+	expected := `## Terraless: Lambda Package
+
+data "archive_file" "lambda-archive" {
+  source_dir = "${path.root}/dummy-source"
+
+  output_path = "lambda.zip"
+  type = "zip"
+}
+
+`
+	assert.Equal(t, buffer.String(), expected)
 }
 
 func TestTerralessTemplates_RenderTemplateToBuffer_Simple(t *testing.T) {

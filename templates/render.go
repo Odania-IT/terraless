@@ -44,7 +44,7 @@ data "aws_region" "current" {}
 
 `
 
-var lambdaPackageTemplate = `## Terraless: Lambda Packaga
+var lambdaPackageTemplate = `## Terraless: Lambda Package
 
 data "archive_file" "lambda-archive" {
   source_dir = "${path.root}/{{.Config.Package.SourceDir}}"
