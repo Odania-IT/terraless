@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -17,8 +18,8 @@ const (
 	TargetSessionTokenDuration       = int64(60 * 60)
 )
 
-func askForTokenCode(tokenSerialNumber string) string {
-	reader := bufio.NewReader(os.Stdin)
+func askForTokenCode(tokenSerialNumber string, in io.Reader) string {
+	reader := bufio.NewReader(in)
 	fmt.Printf("Enter mfa token for %s: ", tokenSerialNumber)
 
 	tokenCode, err := reader.ReadString('\n')
@@ -29,8 +30,8 @@ func askForTokenCode(tokenSerialNumber string) string {
 	return tokenCode
 }
 
-func getTokenCode(mfaArn string) string {
-	tokenCode := askForTokenCode(mfaArn)
+func getTokenCode(mfaArn string, reader io.Reader) string {
+	tokenCode := askForTokenCode(mfaArn, reader)
 
 	return strings.Trim(tokenCode, " \r\n")
 }
@@ -45,7 +46,7 @@ func getIntermediateSessionToken(provider schema.TerralessProvider) *sts.Credent
 	}
 
 	if mfaDevice != "" {
-		tokenCode := getTokenCode(mfaDevice)
+		tokenCode := getTokenCode(mfaDevice, os.Stdin)
 		getSessionTokenInput.SerialNumber = aws.String(mfaDevice)
 		getSessionTokenInput.TokenCode = aws.String(tokenCode)
 	}
