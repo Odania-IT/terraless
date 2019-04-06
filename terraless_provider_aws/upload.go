@@ -5,37 +5,29 @@ import (
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/Odania-IT/terraless/support"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 )
 
-func processUpload(terralessData schema.TerralessData, upload schema.TerralessUpload) {
+var uploadFileFunc = addFileToS3
+func processUpload(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
 	config := terralessData.Config
 	if upload.Type != "s3" {
 		logrus.Debugf("AWS-Provider can not handle upload %s\n", upload.Type)
-		return
+		return []string{}
 	}
 
 	provider := config.Providers[schema.ProcessString(upload.Provider, terralessData.Arguments, terralessData.Config.Settings)]
-	currentCredentials := credentials.NewSharedCredentials("", provider.Data["profile"])
-
-	sess, err := session.NewSession(&aws.Config{
-		Credentials: currentCredentials,
-		Region:      aws.String(upload.Region),
-	})
-
-	if err != nil {
-		logrus.Fatal("Error creating aws session: ", err)
-	}
+	sess := sessionForProvider(provider)
 
 	svc := s3manager.NewUploader(sess)
 
 	uploadedFiles := recursiveUpload(filepath.Join(config.SourcePath, upload.Source), upload.Target, upload.Bucket, svc)
 	logrus.Debugf("Uploaded files: %s\n", uploadedFiles)
+
+	return uploadedFiles
 }
 
 func recursiveUpload(sourceDir string, targetPrefix string, bucketName string, svc *s3manager.Uploader) []string {
@@ -59,7 +51,7 @@ func recursiveUpload(sourceDir string, targetPrefix string, bucketName string, s
 			logrus.Debugf("Processing directory %s", targetFile)
 			result = append(result, recursiveUpload(filename, targetFile, bucketName, svc)...)
 		} else {
-			err = AddFileToS3(svc, bucketName, filename, targetFile)
+			err = uploadFileFunc(svc, bucketName, filename, targetFile)
 			if err != nil {
 				logrus.Fatalf("Failed uploading file %s to s3 bucket %s\n", targetFile, bucketName)
 			}
@@ -71,7 +63,7 @@ func recursiveUpload(sourceDir string, targetPrefix string, bucketName string, s
 	return result
 }
 
-func AddFileToS3(svc *s3manager.Uploader, bucket string, filename string, targetFile string) error {
+func addFileToS3(svc *s3manager.Uploader, bucket string, filename string, targetFile string) error {
 	// Open the file for use
 	file, err := os.Open(filename)
 	if err != nil {

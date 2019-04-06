@@ -24,8 +24,9 @@ func dummyTerralessProvider() schema.Provider {
 		PrepareSession: func(terralessConfig schema.TerralessConfig) {
 			testProcessed["PrepareSession"] = true
 		},
-		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) {
+		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
 			testProcessed["ProcessUpload"] = true
+			return []string{}
 		},
 		RenderAuthorizerTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
 			testProcessed["RenderAuthorizerTemplates"] = true

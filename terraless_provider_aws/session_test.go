@@ -16,7 +16,7 @@ func TestSession_SessionForProfile(t *testing.T) {
 	}
 
 	// when
-	session := sessionForProfile(provider)
+	session := sessionForProvider(provider)
 
 	// then
 	assert.Equal(t, `dummy-region`, *session.Config.Region)

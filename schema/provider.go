@@ -17,7 +17,7 @@ type Provider struct {
 type CanHandleFunc func(resourceType string) bool
 type NameFunc func() string
 type PrepareSessionFunc func(terralessConfig TerralessConfig)
-type ProcessUploadFunc func(terralessData TerralessData, upload TerralessUpload)
+type ProcessUploadFunc func(terralessData TerralessData, upload TerralessUpload) []string
 type RenderAuthorizerTemplatesFunc func(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
 type RenderCertificateTemplatesFunc func(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
 type RenderEndpointTemplatesFunc func(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer

@@ -5,6 +5,19 @@ import (
 	"testing"
 )
 
+func TestTemplatesFunctions_Provider(t *testing.T) {
+	// given
+
+	// when
+	provider := Provider()
+
+	// then
+	assert.Equal(t, true, provider.CanHandle("aws"))
+	assert.Equal(t, false, provider.CanHandle("aws2"))
+	assert.Equal(t, false, provider.CanHandle("dummy"))
+	assert.Equal(t, "terraless-provider-aws", provider.Name())
+}
+
 func TestTemplatesFunctions_CanHandle(t *testing.T) {
 	// given
 

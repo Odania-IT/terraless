@@ -124,7 +124,7 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 			"profile": intermediateProfile,
 		},
 	}
-	svc := sts.New(sessionForProfile(signInProvider))
+	svc := sts.New(sessionForProvider(signInProvider))
 
 	logrus.Debugf("Trying to assume role %s\n", arn)
 	output, err := svc.AssumeRole(&sts.AssumeRoleInput{
@@ -153,7 +153,7 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 
 func sessionValid(provider schema.TerralessProvider) (bool, error) {
 	logrus.Debugf("Checking validity of AWS Provider: %s", provider)
-	svc := sts.New(sessionForProfile(provider))
+	svc := sts.New(sessionForProvider(provider))
 	identity, err := svc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 
 	if err != nil {
@@ -165,7 +165,7 @@ func sessionValid(provider schema.TerralessProvider) (bool, error) {
 	return true, nil
 }
 
-func sessionForProfile(provider schema.TerralessProvider) *session.Session {
+func sessionForProvider(provider schema.TerralessProvider) *session.Session {
 	profileName := provider.Data["profile"]
 	if profileName == "" {
 		profileName = provider.Name

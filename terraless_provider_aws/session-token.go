@@ -38,7 +38,7 @@ func getTokenCode(mfaArn string, reader io.Reader) string {
 
 func getIntermediateSessionToken(provider schema.TerralessProvider) *sts.Credentials {
 	logrus.Debugf("Retrieving session for AWS Provider: %s", provider)
-	svc := sts.New(sessionForProfile(provider))
+	svc := sts.New(sessionForProvider(provider))
 
 	mfaDevice := provider.Data["mfa-device"]
 	getSessionTokenInput := sts.GetSessionTokenInput{

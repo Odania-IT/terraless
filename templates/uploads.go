@@ -17,7 +17,7 @@ func ProcessUploads(terralessData schema.TerralessData) {
 		logrus.Debugf("Processing upload: %#v\n", upload)
 
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			terralessProvider.ProcessUpload(terralessData, upload)
+			_ = terralessProvider.ProcessUpload(terralessData, upload)
 		}
 	}
 }

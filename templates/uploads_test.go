@@ -15,8 +15,10 @@ func dummyTerralessProvider() schema.Provider {
 		},
 		PrepareSession: func(terralessConfig schema.TerralessConfig) {
 		},
-		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) {
+		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
 			uploadProcessed = true
+
+			return []string{}
 		},
 	}
 }
