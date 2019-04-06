@@ -20,6 +20,7 @@ func awsTemplates(name string) string {
 func Provider() schema.Provider {
 	return schema.Provider{
 		CanHandle:                  canHandle,
+		Name:                       providerName,
 		PrepareSession:             prepareSession,
 		ProcessUpload:              processUpload,
 		RenderAuthorizerTemplates:  RenderAuthorizerTemplates,
@@ -32,4 +33,8 @@ func Provider() schema.Provider {
 
 func canHandle(resourceType string) bool {
 	return resourceType == "aws"
+}
+
+func providerName() string {
+	return "terraless-provider-aws"
 }

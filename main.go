@@ -15,8 +15,6 @@ import (
 	"strings"
 )
 
-var terralessProviders []schema.Provider
-
 func detectTerralessProviders() []schema.Provider {
 	var terralessProviders []schema.Provider
 	terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
@@ -28,8 +26,6 @@ func main() {
 	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableLevelTruncation: true,
 	})
-
-	terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
 
 	logrus.Info("Running terraless")
 	arguments, kingpinResult := parseArguments(os.Args[1:])
@@ -78,9 +74,19 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 		}
 		fmt.Printf("Providers: %s\n", strings.Join(allProviders, ", "))
 
+
+		var allTerralessProviders []string
+		for _, provider := range terralessData.TerralessProviders {
+			allTerralessProviders = append(allTerralessProviders, provider.Name())
+		}
+		fmt.Printf("Terraless Providers: %s\n", strings.Join(allTerralessProviders, ", "))
+
 		fmt.Println("Variables:")
 		for key, val := range terralessData.Config.Settings.Variables {
 			fmt.Printf("- %s: %s\n", key, val)
+		}
+		if len(terralessData.Config.Settings.Variables) == 0 {
+			fmt.Println("  none")
 		}
 	default:
 		logrus.Debug("Invalid step")
@@ -162,7 +168,7 @@ func stepInitialize(terralessData *schema.TerralessData) {
 }
 
 func stepPrepareSesssion(terralessData *schema.TerralessData) {
-	for _, terralessProvider := range terralessProviders {
+	for _, terralessProvider := range terralessData.TerralessProviders {
 		terralessProvider.PrepareSession(terralessData.Config)
 	}
 }

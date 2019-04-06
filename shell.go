@@ -29,7 +29,7 @@ func executeCommand(folder string, command string, arguments []string, allowFail
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
-		logrus.Fatal("Error executing command: ", err)
+		logrus.Fatalf("Error executing command '%s': %s\n", command, err)
 	}
 
 	err := cmd.Wait()

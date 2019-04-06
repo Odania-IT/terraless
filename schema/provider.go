@@ -4,6 +4,7 @@ import "bytes"
 
 type Provider struct {
 	CanHandle                  CanHandleFunc
+	Name                       NameFunc
 	PrepareSession             PrepareSessionFunc
 	ProcessUpload              ProcessUploadFunc
 	RenderAuthorizerTemplates  RenderAuthorizerTemplatesFunc
@@ -14,6 +15,7 @@ type Provider struct {
 }
 
 type CanHandleFunc func(resourceType string) bool
+type NameFunc func() string
 type PrepareSessionFunc func(terralessConfig TerralessConfig)
 type ProcessUploadFunc func(terralessData TerralessData, upload TerralessUpload)
 type RenderAuthorizerTemplatesFunc func(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
