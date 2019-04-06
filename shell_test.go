@@ -21,22 +21,31 @@ func TestTerraless_ExecuteCommand(t *testing.T) {
 
 func TestTerraless_CheckApprove_Fail(t *testing.T) {
 	// given
-	reader := strings.NewReader("n")
+	reader1 := strings.NewReader("n")
+	reader2 := strings.NewReader("yn")
+	reader3 := strings.NewReader("sed")
 
 	// when
-	result := checkApprove(reader)
+	result1 := checkApprove(reader1)
+	result2 := checkApprove(reader2)
+	result3 := checkApprove(reader3)
 
 	// then
-	assert.Equal(t, false, result)
+	assert.Equal(t, false, result1)
+	assert.Equal(t, false, result2)
+	assert.Equal(t, false, result3)
 }
 
 func TestTerraless_CheckApprove_Ok(t *testing.T) {
 	// given
-	reader := strings.NewReader("y")
+	reader1 := strings.NewReader("y")
+	reader2 := strings.NewReader("Y")
 
 	// when
-	result := checkApprove(reader)
+	result1 := checkApprove(reader1)
+	result2 := checkApprove(reader2)
 
 	// then
-	assert.Equal(t, true, result)
+	assert.Equal(t, true, result1)
+	assert.Equal(t, true, result2)
 }

@@ -48,6 +48,102 @@ func TestTerralessConfig_BuildTerralessConfig_SettingsIsInConfig(t *testing.T) {
 	assert.Equal(t, expected, config)
 }
 
+func TestTerralessConfig_BuildTerralessConfig_Uploads(t *testing.T) {
+	// given
+	arguments := Arguments{}
+	globalConfig := TerralessGlobalConfig{}
+	projectConfig := TerralessProjectConfig{
+		Settings: TerralessSettings{
+			AutoSignIn: true,
+		},
+		Uploads: []TerralessUpload{
+			{
+				Type: "s3",
+				Bucket: "dummyBucket",
+				Source: "my-src",
+				Target: "my-target",
+			},
+		},
+	}
+
+	// when
+	config := BuildTerralessConfig(globalConfig, projectConfig, arguments)
+
+	// then
+	expected := TerralessConfig{
+		Certificates: map[string]TerralessCertificate{},
+		HasProvider: map[string]bool{},
+		Providers: map[string]TerralessProvider{},
+		Settings: TerralessSettings{
+			AutoSignIn: true,
+		},
+		Uploads: []TerralessUpload{
+			{
+				Type: "s3",
+				Bucket: "dummyBucket",
+				Source: "my-src",
+				Target: "my-target",
+			},
+		},
+	}
+	assert.Equal(t, expected, config)
+}
+
+func TestTerralessConfig_Validate_Nothing(t *testing.T) {
+	// given
+	cfg := TerralessConfig{}
+
+	// when
+	validate := cfg.Validate()
+
+	// then
+	assert.Equal(t, 0, len(validate))
+}
+
+func TestTerralessConfig_Validate_Errors(t *testing.T) {
+	// given
+	cfg := TerralessConfig{
+		Backend: TerralessBackend{
+			Type: "global",
+			Name: "DummyBackend",
+		},
+		Functions: map[string]TerralessFunction{
+			"func1": {
+				Type: "aws",
+				Events: []TerralessFunctionEvent{
+					{
+						Type: "http",
+						Path: "/ohoh",
+						Method: "GET",
+					},
+				},
+			},
+		},
+		Providers: map[string]TerralessProvider{
+			"provider1": {
+				Type: "global",
+				Name: "provider1",
+			},
+			"provider2": {
+				Type: "dummy",
+				Name: "provider1",
+			},
+		},
+	}
+
+	// when
+	validate := cfg.Validate()
+
+	// then
+	expected := []string{
+		"Unresolved global in provider found! {map[] provider1 [] global}\n",
+		"Unresolved global in backend found! DummyBackend\n",
+		"[ERROR] Path in HTTP-Event starts with '/'. Function: func1. Method: GET\n",
+	}
+
+	assert.Equal(t, expected, validate)
+}
+
 func TestTerralessConfig_BuildTerralessConfig_ProvidersIsInGlobalConfig(t *testing.T) {
 	// given
 	arguments := Arguments{}

@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"fmt"
 	"github.com/Odania-IT/terraless/support"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -230,12 +231,13 @@ func findGlobalProvider(activeProvider TerralessActiveProvider, provider Terrale
 	}
 }
 
-func (cfg TerralessConfig) Validate() {
+func (cfg TerralessConfig) Validate() []string {
 	logrus.Debug("Verifying config", cfg)
 	providerNames := map[string]bool{}
+	result := []string{}
 	for _, provider := range cfg.Providers {
 		if provider.Type == "global" {
-			logrus.Fatal("Unresolved global in provider found!", provider)
+			result = append(result, fmt.Sprintf("Unresolved global in provider found! %v\n", provider))
 		}
 
 		if providerNames[provider.Name] {
@@ -246,22 +248,24 @@ func (cfg TerralessConfig) Validate() {
 	}
 
 	if cfg.Backend.Type == "global" {
-		logrus.Fatal("Unresolved global in backend found!", cfg.Backend.Type)
+		result = append(result, fmt.Sprintf("Unresolved global in backend found! %s\n", cfg.Backend.Name))
 	}
 
 	for functionName, functionConfig := range cfg.Functions {
 		for _, event := range functionConfig.Events {
 			if event.Type == "" {
-				logrus.Fatal("Function ", functionName, " does have event without Type! ", event)
+				result = append(result, fmt.Sprintf("Function %s does have event without Type! %s\n", functionName, event))
 			}
 
 			if event.Type == "http" && !support.Contains(HttpMethods, event.Method) {
-				logrus.Fatalf("Invalid Method in HTTP-Event Function: %s. Method: %s", functionName, event.Method)
+				result = append(result, fmt.Sprintf("Invalid Method in HTTP-Event Function: %s. Method: %s\n", functionName, event.Method))
 			}
 
 			if strings.HasPrefix(event.Path, "/") {
-				logrus.Fatalf("[ERROR] Path in HTTP-Event starts with '/'. Function: %s. Method: %s", functionName, event.Method)
+				result = append(result, fmt.Sprintf("[ERROR] Path in HTTP-Event starts with '/'. Function: %s. Method: %s\n", functionName, event.Method))
 			}
 		}
 	}
+
+	return result
 }

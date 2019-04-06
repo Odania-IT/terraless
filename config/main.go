@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func NewTerralessData(arguments schema.Arguments, terralessProviders []schema.Provider) *schema.TerralessData {
@@ -41,7 +42,11 @@ func NewTerralessData(arguments schema.Arguments, terralessProviders []schema.Pr
 	logrus.Debugln(projectConfig.ActiveProviders)
 
 	terralessData.Config = schema.BuildTerralessConfig(*globalConfig, *projectConfig, arguments)
-	terralessData.Config.Validate()
+	validate := terralessData.Config.Validate()
+
+	if len(validate) > 0 {
+		logrus.Fatalf("Failed to verify config! %s\n", strings.Join(validate, ", "))
+	}
 
 	return terralessData
 }
