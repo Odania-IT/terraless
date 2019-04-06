@@ -339,3 +339,53 @@ func TestMain_Upload(t *testing.T) {
 	assert.Equal(t, false, testProcessed["RenderFunctionTemplates"])
 	assert.Equal(t, true, testProcessed["RenderUploadTemplates"])
 }
+
+func TestMain_Session(t *testing.T) {
+	// given
+	terralessData := schema.TerralessData{
+		ActiveProviders: map[string]schema.TerralessProvider{},
+		Arguments: schema.Arguments{
+			Config:           filepath.Join(os.TempDir(), "terraless-provider-aws-test", "my-project-config.yml"),
+			Environment:      "test",
+			ForceDeploy:      true,
+			GlobalConfig:     filepath.Join(os.TempDir(), "terraless-provider-aws-test", "my-global-config.yml"),
+			TerraformCommand: "echo",
+		},
+		Config: schema.TerralessConfig{
+			ProjectName: "DummyProject",
+			Providers: map[string]schema.TerralessProvider{
+				"DummyProvider1": {
+					Name: "DummyProvider1",
+					Type: "dummy",
+					Roles: []string{
+						"role1",
+					},
+				},
+			},
+			Uploads: []schema.TerralessUpload{
+				{
+					Type: "dummyUpload",
+				},
+			},
+		},
+		TerralessProviders: []schema.Provider{
+			dummyTerralessProvider(),
+		},
+	}
+	kingpinResult := sessionCommand.FullCommand()
+	testProcessed = map[string]bool{}
+
+	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
+
+	// when
+	_ = captureOutputProcessCommand(terralessData, kingpinResult)
+
+	// then
+	assert.Equal(t, true, testProcessed["PrepareSession"])
+	assert.Equal(t, false, testProcessed["ProcessUpload"])
+	assert.Equal(t, false, testProcessed["RenderAuthorizerTemplates"])
+	assert.Equal(t, false, testProcessed["RenderCertificateTemplates"])
+	assert.Equal(t, false, testProcessed["RenderEndpointTemplates"])
+	assert.Equal(t, false, testProcessed["RenderFunctionTemplates"])
+	assert.Equal(t, false, testProcessed["RenderUploadTemplates"])
+}

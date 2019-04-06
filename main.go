@@ -198,7 +198,7 @@ func deployTerraform(config schema.TerralessConfig, environment string, forceDep
 	}
 	executeCommand(config.SourcePath, terraformCommand, planArgs, false)
 
-	if forceDeploy || checkApprove() {
+	if forceDeploy || checkApprove(os.Stdin) {
 		logrus.Info("Deploying terraform plan")
 		executeCommand(config.SourcePath, terraformCommand, []string{"apply", "-input=false", "terraform.plan"}, false)
 	} else {

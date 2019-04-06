@@ -25,7 +25,7 @@ func processUpload(terralessData schema.TerralessData, upload schema.TerralessUp
 
 	sess, err := session.NewSession(&aws.Config{
 		Credentials: currentCredentials,
-		Region: aws.String(upload.Region),
+		Region:      aws.String(upload.Region),
 	})
 
 	if err != nil {
@@ -37,7 +37,6 @@ func processUpload(terralessData schema.TerralessData, upload schema.TerralessUp
 	uploadedFiles := recursiveUpload(filepath.Join(config.SourcePath, upload.Source), upload.Target, upload.Bucket, svc)
 	logrus.Debugf("Uploaded files: %s\n", uploadedFiles)
 }
-
 
 func recursiveUpload(sourceDir string, targetPrefix string, bucketName string, svc *s3manager.Uploader) []string {
 	var result []string
@@ -98,11 +97,11 @@ func AddFileToS3(svc *s3manager.Uploader, bucket string, filename string, target
 	// of the file you're uploading.
 	contentType := support.DetectContentType(filename)
 	uploadResult, err := svc.Upload(&s3manager.UploadInput{
-		Bucket:             aws.String(bucket),
-		Key:                aws.String(targetFile),
-		ACL:                aws.String("private"),
-		Body:               bytes.NewReader(buffer),
-		ContentType:        aws.String(contentType),
+		Bucket:      aws.String(bucket),
+		Key:         aws.String(targetFile),
+		ACL:         aws.String("private"),
+		Body:        bytes.NewReader(buffer),
+		ContentType: aws.String(contentType),
 	})
 
 	if err != nil {

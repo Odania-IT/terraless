@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
@@ -36,8 +37,8 @@ func executeCommand(folder string, command string, arguments []string, allowFail
 	handleExecuteCommandErr(err, allowFailure)
 }
 
-func checkApprove() bool {
-	reader := bufio.NewReader(os.Stdin)
+func checkApprove(in io.Reader) bool {
+	reader := bufio.NewReader(in)
 	fmt.Print("Deploy? (y)")
 	input, _ := reader.ReadString('\n')
 	input = strings.Trim(input, "\n")
