@@ -19,6 +19,9 @@ type AwsProfileWriter struct {
 }
 
 var intermediateProfilesProcessed = map[string]string{}
+var execAssumeRoleFunc = execAssumeRole
+var retrieveCallerIdentityFunc = retrieveCallerIdentity
+var writeSessionProfileFunc = writeSessionProfile
 
 func prepareSession(terralessConfig schema.TerralessConfig) {
 	for _, provider := range terralessConfig.Providers {
@@ -56,7 +59,7 @@ func verifyOrUpdateSession(provider schema.TerralessProvider, intermediateProfil
 	validSession, err := sessionValid(provider)
 	if !validSession {
 		if autoSignIn {
-			logrus.Infof("Trying auto login for provider %s\n", provider.Name)
+			logrus.Infof("Trying auto login for provider %s [intermediate profile: %s]\n", provider.Name, intermediateProfile)
 			assumeRole(intermediateProfile, provider)
 			validSession, err = sessionValid(provider)
 		}
@@ -106,7 +109,7 @@ func validateOrRefreshIntermediateSession(provider schema.TerralessProvider, int
 	awsCredentials := getIntermediateSessionToken(intermediateProvider)
 	logrus.Debug(awsCredentials)
 
-	writeSessionProfile(*awsCredentials, intermediateProfile, region)
+	writeSessionProfileFunc(*awsCredentials, intermediateProfile, region)
 }
 
 func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
@@ -127,7 +130,7 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 	svc := sts.New(sessionForProvider(signInProvider))
 
 	logrus.Debugf("Trying to assume role %s\n", arn)
-	output, err := svc.AssumeRole(&sts.AssumeRoleInput{
+	output, err := execAssumeRoleFunc(svc, sts.AssumeRoleInput{
 		DurationSeconds: aws.Int64(getDurationFromData(provider.Data, "session-duration", TargetSessionTokenDuration)),
 		RoleArn:         aws.String(arn),
 		RoleSessionName: aws.String(support.SanitizeSessionName(provider.Name)),
@@ -148,13 +151,16 @@ func assumeRole(intermediateProfile string, provider schema.TerralessProvider) {
 		region = "eu-central-1"
 	}
 
-	writeSessionProfile(*output.Credentials, profileName, region)
+	writeSessionProfileFunc(*output.Credentials, profileName, region)
+}
+
+func execAssumeRole(svc *sts.STS, input sts.AssumeRoleInput) (*sts.AssumeRoleOutput, error) {
+	return svc.AssumeRole(&input)
 }
 
 func sessionValid(provider schema.TerralessProvider) (bool, error) {
 	logrus.Debugf("Checking validity of AWS Provider: %s", provider)
-	svc := sts.New(sessionForProvider(provider))
-	identity, err := svc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
+	identity, err := retrieveCallerIdentityFunc(provider)
 
 	if err != nil {
 		logrus.Debugf("Invalid AWS Session for provider: %s Error: %s\n", provider.Name, err)
@@ -163,6 +169,11 @@ func sessionValid(provider schema.TerralessProvider) (bool, error) {
 
 	logrus.Debugf("Valid AWS Session for provider: %s User: %s\n", provider.Name, identity)
 	return true, nil
+}
+
+func retrieveCallerIdentity(provider schema.TerralessProvider) (*sts.GetCallerIdentityOutput, error) {
+	svc := sts.New(sessionForProvider(provider))
+	return svc.GetCallerIdentity(&sts.GetCallerIdentityInput{})
 }
 
 func sessionForProvider(provider schema.TerralessProvider) *session.Session {
