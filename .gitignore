@@ -4,4 +4,4 @@ coverage.txt
 examples/.terraless
 dist
 terraless
-
+**/terraless-main.tf
