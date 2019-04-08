@@ -20,7 +20,7 @@ func EnrichWithData(data map[string]string, override map[string]string) map[stri
 }
 
 func ProcessString(check string, arguments Arguments, settings TerralessSettings) string {
-	r, _ := regexp.Compile(string(`\$\{[a-zA-Z0-9]+\}`))
+	r, _ := regexp.Compile(string(`\$\{[a-zA-Z0-9_]+\}`))
 	matches := r.FindAllString(check, -1)
 
 	if len(matches) > 0 {
@@ -29,6 +29,14 @@ func ProcessString(check string, arguments Arguments, settings TerralessSettings
 				check = strings.Replace(check, match, arguments.Environment, -1)
 			} else {
 				found := false
+
+				for key, val := range arguments.Variables {
+					str := "${" + key + "}"
+					if str == match {
+						check = strings.Replace(check, match, val, -1)
+						found = true
+					}
+				}
 
 				for key, val := range settings.Variables {
 					str := "${" + key + "}"

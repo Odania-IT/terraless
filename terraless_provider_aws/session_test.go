@@ -111,6 +111,11 @@ func TestSession_PrepareSession(t *testing.T) {
 	prepareSession(terralessConfig)
 
 	// then
+	expected := []string{
+		"provider1-profile",
+		"provider2-profile",
+	}
+	assert.ElementsMatch(t, expected, preparedSessions)
 	assert.Equal(t, 2, len(preparedSessions))
 	assert.Equal(t, 2, writeSessionProfileCalls)
 }
