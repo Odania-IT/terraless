@@ -32,12 +32,15 @@ var (
 	variables        = app.Flag("var", "Variable").StringMap()
 
 	// Commands
+	authCommand    = app.Command("auth", "Authenticate with providers")
 	deployCommand  = app.Command("deploy", "Deploy")
 	initCommand    = app.Command("init", "Initialize Templates")
 	infoCommand    = app.Command("info", "Display information")
-	sessionCommand = app.Command("session", "Handle Provider sessions")
-	versionCommand = app.Command("version", "Version")
 	uploadCommand  = app.Command("upload", "Upload")
+	versionCommand = app.Command("version", "Version")
+
+	// Auth Command Options
+	authProviderName = authCommand.Flag("provider", "Provider to authenticate with").String()
 
 	// Deploy Command Options
 	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()

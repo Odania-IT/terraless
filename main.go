@@ -49,15 +49,22 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 	logrus.Debug("Config", currentConfig)
 
 	switch kingpinResult {
+	case authCommand.FullCommand():
+		logrus.Debug("Handling Auth Command")
+
+		if authProviderName == nil || *authProviderName == "" {
+			stepPrepareSesssion(terralessData)
+		}
+
+
+
+
 	case deployCommand.FullCommand():
 		logrus.Debug("Handling Deploy Command")
 		stepDeploy(terralessData)
 	case initCommand.FullCommand():
 		logrus.Debug("Handling Init Command")
 		stepInitialize(terralessData)
-	case sessionCommand.FullCommand():
-		logrus.Debug("Handling Session Command")
-		stepPrepareSesssion(terralessData)
 	case uploadCommand.FullCommand():
 		logrus.Debug("Handling Upload Command")
 		stepUpload(terralessData)

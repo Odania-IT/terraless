@@ -341,7 +341,7 @@ func TestMain_Upload(t *testing.T) {
 	assert.Equal(t, true, testProcessed["RenderUploadTemplates"])
 }
 
-func TestMain_Session(t *testing.T) {
+func TestMain_Auth(t *testing.T) {
 	// given
 	terralessData := schema.TerralessData{
 		ActiveProviders: map[string]schema.TerralessProvider{},
@@ -373,7 +373,7 @@ func TestMain_Session(t *testing.T) {
 			dummyTerralessProvider(),
 		},
 	}
-	kingpinResult := sessionCommand.FullCommand()
+	kingpinResult := authCommand.FullCommand()
 	testProcessed = map[string]bool{}
 
 	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
