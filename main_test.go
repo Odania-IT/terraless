@@ -48,7 +48,7 @@ func dummyTerralessProvider() schema.Provider {
 			testProcessed["RenderFunctionTemplates"] = true
 			return buffer
 		},
-		RenderUploadTemplates: func(currentConfig schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
+		RenderUploadTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
 			testProcessed["RenderUploadTemplates"] = true
 			return buffer
 		},

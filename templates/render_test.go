@@ -3,7 +3,7 @@ package templates
 import (
 	"bytes"
 	"github.com/Odania-IT/terraless/schema"
-	"github.com/magiconair/properties/assert"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -11,6 +11,9 @@ func dummyTerralessRenderProvider() schema.Provider {
 	return schema.Provider{
 		CanHandle: func(resourceType string) bool {
 			return resourceType == "dummy"
+		},
+		FinalizeTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
+			return buffer
 		},
 		PrepareSession: func(terralessConfig schema.TerralessConfig) {
 		},
@@ -26,7 +29,7 @@ func dummyTerralessRenderProvider() schema.Provider {
 		RenderEndpointTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
 			return buffer
 		},
-		RenderUploadTemplates: func(currentConfig schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
+		RenderUploadTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
 			return buffer
 		},
 	}

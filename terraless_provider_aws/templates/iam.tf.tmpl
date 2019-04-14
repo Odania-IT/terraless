@@ -1,7 +1,7 @@
 ## Terraless IAM
 
 resource "aws_iam_role" "terraless-lambda-iam-role" {
-  name = "terraless-lambda-iam-role"
+  name = "{{.Config.ProjectName}}-terraless-lambda-iam-role"
 
   assume_role_policy = "${data.aws_iam_policy_document.terraless-lambda-assume-role.json}"
 
@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "terraless-lambda" {
 }
 
 resource "aws_iam_policy" "terraless-lambda-policy" {
-  name = "terraless-lambda-policy"
+  name = "{{.Config.ProjectName}}-terraless-lambda-policy"
 
   policy = "${data.aws_iam_policy_document.terraless-lambda.json}"
 }

@@ -24,4 +24,4 @@ type RenderAuthorizerTemplatesFunc func(config TerralessConfig, buffer bytes.Buf
 type RenderCertificateTemplatesFunc func(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
 type RenderEndpointTemplatesFunc func(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
 type RenderFunctionTemplatesFunc func(resourceType string, functionEvents FunctionEvents, terralessData *TerralessData, buffer bytes.Buffer) bytes.Buffer
-type RenderUploadTemplatesFunc func(currentConfig TerralessConfig, buffer bytes.Buffer) bytes.Buffer
+type RenderUploadTemplatesFunc func(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer

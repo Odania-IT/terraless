@@ -24,12 +24,15 @@ type TerralessCertificate struct {
 }
 
 type TerralessCloudfront struct {
-	Aliases        []string                   `yaml:"Aliases"`
-	Caching        TerralessCloudfrontCaching `yaml:"Caching"`
-	Certificate    string                     `yaml:"Certificate"`
-	Domain         string                     `yaml:"Domain"`
-	LoggingEnabled bool                       `yaml:"LoggingEnabled"`
-	PriceClass     string                     `yaml:"PriceClass"`
+	Aliases                   []string                   `yaml:"Aliases"`
+	Caching                   TerralessCloudfrontCaching `yaml:"Caching"`
+	Certificate               string                     `yaml:"Certificate"`
+	Handler                   string                     `yaml:"Handler"`
+	LambdaFunctionAssociation map[string]string          `yaml:"LambdaFunctionAssociation"`
+	NoCreateBucket            bool                       `yaml:"NoCreateBucket"`
+	Domain                    string                     `yaml:"Domain"`
+	LoggingEnabled            bool                       `yaml:"LoggingEnabled"`
+	PriceClass                string                     `yaml:"PriceClass"`
 }
 
 type TerralessCloudfrontCaching struct {
@@ -113,6 +116,7 @@ type TerralessUpload struct {
 
 	// only for rendering template
 	Certificate      TerralessCertificate
+	Environment      string
 	LambdaAtEdgeFile string
 	OwnCertificate   bool
 	ProjectName      string

@@ -101,7 +101,7 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 	if len(config.Uploads) > 0 {
 		logrus.Debug("Creating cloudfront templates")
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			buffer = terralessProvider.RenderUploadTemplates(config, buffer)
+			buffer = terralessProvider.RenderUploadTemplates(*terralessData, buffer)
 		}
 	}
 

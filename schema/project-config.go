@@ -17,6 +17,7 @@ type TerralessAuthorizer struct {
 
 type TerralessEndpoint struct {
 	Aliases     []string `yaml:"Aliases"`
+	BasePath    string   `yaml:"BasePath"`
 	Certificate string   `yaml:"Certificate"`
 	Domain      string   `yaml:"Domain"`
 	Type        string   `yaml:"Type"`

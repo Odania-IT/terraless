@@ -9,7 +9,7 @@ resource "aws_cloudwatch_log_group" "lambda-log-terraless-lambda-cloudfront" {
 
 resource "aws_lambda_function" "terraless-lambda-cloudfront" {
   function_name = "terraless-lambda-cloudfront-{{ .ProjectName }}"
-  handler = "lambda.singleEntryPointHandler"
+  handler = "lambda.{{ .Handler }}"
   role = "${aws_iam_role.terraless-lambda-iam-role.arn}"
   runtime = "nodejs8.10"
   filename = "{{ .FileName }}"
