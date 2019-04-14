@@ -1,6 +1,8 @@
 package terraless_provider_aws
 
 import (
+	"bytes"
+	"github.com/Odania-IT/terraless/schema"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -46,4 +48,23 @@ func TestTemplatesFunctions_AwsTemplates(t *testing.T) {
 
 	// then
 	assert.Contains(t, template, `resource "aws_iam_role" "terraless-lambda-iam-role"`)
+}
+
+func TestTemplatesFunctions_FinalizeTemplates(t *testing.T) {
+	// given
+	addTerralessLambdaRole = true
+	terralessData := schema.TerralessData{
+		Arguments: schema.Arguments{
+			Environment: "DummyEnvironment",
+		},
+		Config: schema.TerralessConfig{
+			ProjectName: "DummyProjectName",
+		},
+	}
+
+	// when
+	buffer := finalizeTemplates(terralessData, bytes.Buffer{})
+
+	// then
+	assert.Contains(t, buffer.String(), `resource "aws_iam_role" "terraless-lambda-iam-role"`)
 }

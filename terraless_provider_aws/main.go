@@ -1,7 +1,9 @@
 package terraless_provider_aws
 
 import (
+	"bytes"
 	"github.com/Odania-IT/terraless/schema"
+	"github.com/Odania-IT/terraless/templates"
 	"github.com/gobuffalo/packr"
 	"github.com/sirupsen/logrus"
 )
@@ -20,6 +22,7 @@ func awsTemplates(name string) string {
 func Provider() schema.Provider {
 	return schema.Provider{
 		CanHandle:                  canHandle,
+		FinalizeTemplates:          finalizeTemplates,
 		Name:                       providerName,
 		PrepareSession:             prepareSession,
 		ProcessUpload:              processUpload,
@@ -33,6 +36,14 @@ func Provider() schema.Provider {
 
 func canHandle(resourceType string) bool {
 	return resourceType == "aws"
+}
+
+func finalizeTemplates(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
+	if addTerralessLambdaRole {
+		buffer = templates.RenderTemplateToBuffer(terralessData, buffer, awsTemplates("iam.tf.tmpl"), "aws-lambda-iam")
+	}
+
+	return buffer
 }
 
 func providerName() string {

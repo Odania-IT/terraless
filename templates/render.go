@@ -105,6 +105,11 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 		}
 	}
 
+	logrus.Debug("Finalizing templates")
+	for _, terralessProvider := range terralessData.TerralessProviders {
+		buffer = terralessProvider.FinalizeTemplates(*terralessData, buffer)
+	}
+
 	return buffer
 }
 
@@ -160,6 +165,9 @@ func RenderTemplateToBuffer(config interface{}, buffer bytes.Buffer, tpl string,
 			currentTime := time.Now()
 
 			return currentTime.Format("2006-01-02 15:04:05")
+		},
+		"stringNotEmpty": func(val string) bool {
+			return val != ""
 		},
 	}).Parse(tpl))
 	err := tmpl.Execute(&buffer, config)

@@ -135,10 +135,5 @@ func RenderFunctionTemplates(resourceType string, functionEvents schema.Function
 		terralessData.Config.Runtimes = append(terralessData.Config.Runtimes, functionConfig.Runtime)
 	}
 
-	// AWS Lambda
-	if addTerralessLambdaRole {
-		buffer = templates.RenderTemplateToBuffer(terralessData, buffer, awsTemplates("iam.tf.tmpl"), "aws-lambda-iam")
-	}
-
 	return buffer
 }

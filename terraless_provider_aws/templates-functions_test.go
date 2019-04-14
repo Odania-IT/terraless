@@ -55,7 +55,6 @@ func TestTemplatesFunctions_RenderFunctionTemplates_HttpEvent(t *testing.T) {
 	assert.Contains(t, buffer.String(), expected)
 	assert.Contains(t, buffer.String(), `output "api-gateway-invoke-url"`)
 	assert.Contains(t, buffer.String(), `resource "aws_api_gateway_resource" "terraless-lambda-DummyFunction-dummy"`)
-	assert.Contains(t, buffer.String(), `resource "aws_iam_role" "terraless-lambda-iam-role"`)
 	assert.Contains(t, buffer.String(), `resource "aws_cloudwatch_log_group" "lambda-log-DummyFunction"`)
 }
 

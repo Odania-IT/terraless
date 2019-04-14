@@ -18,6 +18,10 @@ func dummyTerralessProvider() schema.Provider {
 		CanHandle: func(resourceType string) bool {
 			return resourceType == "dummy"
 		},
+		FinalizeTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
+			testProcessed["FinalizeTemplates"] = true
+			return buffer
+		},
 		Name: func() string {
 			return "terraless-provider-dummy"
 		},
