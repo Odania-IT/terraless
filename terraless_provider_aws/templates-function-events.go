@@ -35,14 +35,20 @@ resource "aws_api_gateway_resource" "terraless-lambda-{{.FunctionName}}-{{.Resou
 
 resource "aws_api_gateway_method" "terraless-lambda-{{.FunctionName}}-{{.Idx}}" {
   rest_api_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
+  {{ if stringNotEmpty .Path }}
   resource_id   = "${aws_api_gateway_resource.terraless-lambda-{{.FunctionName}}-{{.ResourceNameForPath}}.id}"
+  {{ else }}
+  resource_id   = "${aws_api_gateway_rest_api.terraless-api-gateway.root_resource_id}"
+  {{ end }}
   http_method   = "{{ .Method }}"
   authorization = "{{ .Authorization }}"
   authorizer_id = "{{ .AuthorizerId }}"
 }
 
 resource "aws_api_gateway_integration" "terraless-lambda-{{.FunctionName}}-{{.Idx}}" {
+  {{ if stringNotEmpty .Path }}
   depends_on = ["aws_api_gateway_resource.terraless-lambda-{{.FunctionName}}-{{.ResourceNameForPath}}"]
+  {{ end }}
 
   rest_api_id = "${aws_api_gateway_rest_api.terraless-api-gateway.id}"
   resource_id = "${aws_api_gateway_method.terraless-lambda-{{.FunctionName}}-{{.Idx}}.resource_id}"

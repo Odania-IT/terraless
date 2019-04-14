@@ -19,6 +19,7 @@ func processUpload(terralessData schema.TerralessData, upload schema.TerralessUp
 		return []string{}
 	}
 
+	logrus.Infof("Processing Upload Source: %s Bucket: %s\n", upload.Source, upload.Bucket)
 	provider := config.Providers[schema.ProcessString(upload.Provider, terralessData.Arguments, terralessData.Config.Settings)]
 	sess := sessionForProvider(provider)
 

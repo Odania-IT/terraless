@@ -13,6 +13,7 @@ resource "aws_acm_certificate" "{{ .TerraformName }}" {
   tags = "${var.terraless-default-tags}"
 }
 
+{{ if stringNotEmpty .ZoneId }}
 resource "aws_route53_record" "{{ .TerraformName }}-validation" {
   name = "${aws_acm_certificate.{{ .TerraformName }}.domain_validation_options.0.resource_record_name}"
   type = "${aws_acm_certificate.{{ .TerraformName }}.domain_validation_options.0.resource_record_type}"
@@ -35,3 +36,4 @@ resource "aws_acm_certificate_validation" "{{ .TerraformName }}-validation" {
     "aws_acm_certificate.{{ .TerraformName }}"
   ]
 }
+{{ end }}

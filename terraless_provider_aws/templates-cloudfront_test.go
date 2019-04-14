@@ -60,5 +60,4 @@ func TestTemplatesFunctions_RenderUploadTemplates_WithDomain(t *testing.T) {
 	assert.Contains(t, buffer.String(), `resource "aws_lambda_function" "terraless-lambda-cloudfront"`)
 	assert.Contains(t, buffer.String(), `resource "aws_cloudfront_origin_access_identity" "terraless-default"`)
 	assert.Contains(t, buffer.String(), `resource "aws_cloudfront_distribution" "terraless-default"`)
-	assert.Contains(t, buffer.String(), `resource "aws_route53_record" "terraless-cloudfront-target-my-dummy-domain-org"`)
 }

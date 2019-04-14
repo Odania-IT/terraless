@@ -156,6 +156,10 @@ func renderTemplate(terralessData schema.TerralessData, targetFileName string, t
 func RenderTemplateToBuffer(config interface{}, buffer bytes.Buffer, tpl string, name string) bytes.Buffer {
 	tmpl := template.Must(template.New(name).Funcs(template.FuncMap{
 		"resourceForPathRendered": func(pathRendered map[string]string, key string) bool {
+			if key == "" {
+				return false
+			}
+
 			return pathRendered[key] == ""
 		},
 		"terralessResourceName": func(pathRendered map[string]string, key string) string {
