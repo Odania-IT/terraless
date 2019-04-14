@@ -16,7 +16,11 @@ func ContainsStartsWith(haystack []string, needle string) bool {
 }
 
 func SanitizeString(val string) string {
-	return strings.Replace(val, ".", "-", -1)
+	val = strings.Replace(val, ".", "-", -1)
+	val = strings.Replace(val, "{", "-", -1)
+	val = strings.Replace(val, "}", "-", -1)
+
+	return val
 }
 
 func SanitizeSessionName(val string) string {
