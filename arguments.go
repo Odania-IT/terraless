@@ -49,11 +49,6 @@ var (
 func detectGlobalConfig(configFolders []string) string {
 	logrus.Info("Trying to detect global config")
 
-	usr, err := user.Current()
-	if err != nil {
-		logrus.Fatal("Could not detect user home folder")
-	}
-
 	currentWorkingDirectory, err := os.Getwd()
 	if err != nil {
 		logrus.Fatal("Could not detect current directory")
@@ -63,6 +58,12 @@ func detectGlobalConfig(configFolders []string) string {
 	if _, err := os.Stat(fullPath); err == nil {
 		logrus.Infof("Found global config: %s\n", fullPath)
 		return fullPath
+	}
+
+	usr, err := user.Current()
+	if err != nil {
+		logrus.Warnf("Could not detect user home folder")
+		return ""
 	}
 
 	for _, folder := range configFolders {
