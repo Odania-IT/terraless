@@ -213,7 +213,7 @@ func findGlobalProvider(activeProvider TerralessActiveProvider, provider Terrale
 	team := globalCfg.findTeamByName(activeProvider.Team)
 
 	if team.Name == "" {
-		logrus.Fatalf("Team '%s' not found in global config\n", activeProvider.Team)
+		logrus.Fatalf("[findGlobalProvider] Team '%s' not found in global config\n", activeProvider.Team)
 	}
 
 	providerName := ProcessString(provider.Name, arguments, settings)

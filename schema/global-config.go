@@ -21,6 +21,6 @@ func (globalCfg TerralessGlobalConfig) findTeamByName(teamName string) Terraless
 		}
 	}
 
-	logrus.Fatalf("Team '%s' not found in global config\n", teamName)
+	logrus.Warnf("Team '%s' not found in global config\n", teamName)
 	return TerralessTeam{}
 }

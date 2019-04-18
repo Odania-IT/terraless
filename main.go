@@ -56,9 +56,6 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 			stepPrepareSesssion(terralessData)
 		}
 
-
-
-
 	case deployCommand.FullCommand():
 		logrus.Debug("Handling Deploy Command")
 		stepDeploy(terralessData)
@@ -175,6 +172,11 @@ func stepInitialize(terralessData *schema.TerralessData) {
 }
 
 func stepPrepareSesssion(terralessData *schema.TerralessData) {
+	if support.RunningInAws() && !terralessData.Config.Settings.AutoSignInInCloud {
+		logrus.Info("Not executing prepare session! Settings: AutoSignInInCloud is false")
+		return
+	}
+
 	for _, terralessProvider := range terralessData.TerralessProviders {
 		terralessProvider.PrepareSession(terralessData.Config)
 	}

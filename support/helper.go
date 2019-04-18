@@ -1,6 +1,8 @@
 package support
 
 import (
+	"github.com/sirupsen/logrus"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -36,4 +38,15 @@ func Contains(haystack []string, needle string) bool {
 	}
 
 	return false
+}
+
+func RunningInAws() bool {
+	codebuildId := os.Getenv("CODEBUILD_BUILD_ID")
+
+	if codebuildId == "" {
+		return false
+	}
+
+	logrus.Infof("Running in Codebuild with build id: %s\n", codebuildId)
+	return true
 }
