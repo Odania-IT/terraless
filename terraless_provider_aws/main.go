@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/Odania-IT/terraless/templates"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/sirupsen/logrus"
 )
 

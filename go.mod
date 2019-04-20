@@ -9,7 +9,7 @@ require (
 	github.com/go-ini/ini v1.42.0
 	github.com/gobuffalo/flect v0.1.3 // indirect
 	github.com/gobuffalo/packr v1.25.0
-	github.com/gobuffalo/packr/v2 v2.2.0 // indirect
+	github.com/gobuffalo/packr/v2 v2.2.0
 	github.com/gofrs/flock v0.7.1
 	github.com/golang-utils/lockfile v0.0.0-20170803195317-342df9650a96 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
