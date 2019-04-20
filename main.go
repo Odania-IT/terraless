@@ -190,7 +190,13 @@ func stepUpload(terralessData *schema.TerralessData) {
 
 func deployTerraform(config schema.TerralessConfig, environment string, forceDeploy bool, terraformCommand string) {
 	logrus.Info("Executing terraform init")
-	executeCommand(config.SourcePath, terraformCommand, []string{"init"}, false)
+	initArguments := []string{"init"}
+
+	if config.Settings.TerraformPluginDir != "" {
+		initArguments = append(initArguments, "-plugin-dir", config.Settings.TerraformPluginDir)
+	}
+
+	executeCommand(config.SourcePath, terraformCommand, initArguments, false)
 	logrus.Info("Creating new terraform workspace")
 	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "new", config.ProjectName}, true)
 	logrus.Info("Selecting new terraform workspace")
