@@ -12,6 +12,8 @@ services:
 install: true
 before_script:
   - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+  - go get github.com/gobuffalo/packr/v2/packr2
+  - packr2
 script:
   - golangci-lint run
   - go test -v -race -coverprofile=coverage.txt -covermode=atomic ./...
