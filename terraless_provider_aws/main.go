@@ -9,7 +9,7 @@ import (
 )
 
 func awsTemplates(name string) string {
-	pckr := packr.NewBox("./templates")
+	pckr := packr.New("awsTemplates", "./templates")
 
 	tpl, err := pckr.FindString(name)
 	if err != nil {
