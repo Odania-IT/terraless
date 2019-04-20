@@ -5,3 +5,7 @@ examples/.terraless
 dist
 terraless
 **/terraless-main.tf
+
+# Auto generated files by packr2 (required for goreleaser on travis)
+packrd/
+
