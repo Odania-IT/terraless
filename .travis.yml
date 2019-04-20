@@ -21,6 +21,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
   - bash -c 'git checkout go.mod go.sum'
   - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+  - git status
 deploy:
   - provider: script
     skip_cleanup: true
