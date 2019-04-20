@@ -197,3 +197,17 @@ func sessionForProvider(provider schema.TerralessProvider) *session.Session {
 
 	return sess
 }
+
+func simpleSession(provider schema.TerralessProvider) *session.Session {
+	config := aws.Config{
+		Region: aws.String(provider.Data["region"]),
+	}
+
+	sess, err := session.NewSession(&config)
+
+	if err != nil {
+		logrus.Fatalf("Failed creating AWS Session for provider: %s Error: %s\n", provider, err)
+	}
+
+	return sess
+}

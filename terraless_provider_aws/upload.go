@@ -20,8 +20,12 @@ func processUpload(terralessData schema.TerralessData, upload schema.TerralessUp
 	}
 
 	logrus.Infof("Processing Upload Source: %s Bucket: %s\n", upload.Source, upload.Bucket)
+
 	provider := config.Providers[schema.ProcessString(upload.Provider, terralessData.Arguments, terralessData.Config.Settings)]
-	sess := sessionForProvider(provider)
+	sess := simpleSession(provider)
+	if !support.RunningInAws() || terralessData.Config.Settings.AutoSignInInCloud {
+		sess = sessionForProvider(provider)
+	}
 
 	svc := s3manager.NewUploader(sess)
 
