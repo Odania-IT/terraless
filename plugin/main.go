@@ -46,19 +46,19 @@ var pluginTypes = []PluginType{
 var extensions = map[string]schema.Extension{}
 var providers = map[string]schema.Provider{}
 
-func HandlePlugins(plugins []schema.TerralessPlugin, pluginDirectory string) bool {
+func HandlePlugins(configPlugins []schema.TerralessPlugin, pluginDirectory string) bool {
 	logrus.Info("Processing Plugins")
 	existingPlugins := existingPlugins(pluginDirectory)
 	var pluginInfos = []string{}
-	for _, plugin := range plugins {
-		version := plugin.Version
-		if plugin.Version == "" {
+	for _, configPlugin := range configPlugins {
+		version := configPlugin.Version
+		if configPlugin.Version == "" {
 			version = "~any"
 		}
 
-		currentVersion := verifyPluginInstalled(plugin, existingPlugins)
+		currentVersion := verifyPluginInstalled(configPlugin, existingPlugins)
 
-		pluginInfo := fmt.Sprintf("  - %s (Current Version: %s Wanted Version: %s)", plugin.Name, currentVersion, version)
+		pluginInfo := fmt.Sprintf("  - %s (Current Version: %s Wanted Version: %s)", configPlugin.Name, currentVersion, version)
 		pluginInfos = append(pluginInfos, pluginInfo)
 	}
 
@@ -119,7 +119,7 @@ func detectPluginAndLoad(file string) {
 	for _, pluginType := range pluginTypes {
 		if strings.HasPrefix(fileName, pluginType.Prefix) {
 			logrus.Debugf("Detected plugin of type '%s' - %s\n", pluginType.Type, fileName)
-			loadPlugin(pluginType, file, &schema.ExtensionPlugin{})
+			loadPlugin(pluginType, file)
 			return
 		}
 	}
@@ -127,11 +127,24 @@ func detectPluginAndLoad(file string) {
 	logrus.Warnf("Found unknown plugin %s\n", fileName)
 }
 
-func loadPlugin(pluginType PluginType, file string, pluginMapValue plugin.Plugin) {
+func (pluginType PluginType) pluginMapValue() plugin.Plugin {
+	if pluginType.Type == ExtensionPluginType {
+		return &schema.ExtensionPlugin{}
+	}
+
+	if pluginType.Type == ProviderPluginType {
+		return &schema.ProviderPlugin{}
+	}
+
+	logrus.Warnf("Missing plugin data for plugin type %s\n", pluginType.Type)
+	return nil
+}
+
+func loadPlugin(pluginType PluginType, file string) {
 	fileName := filepath.Base(file)
 
 	pluginMap := map[string]plugin.Plugin{}
-	pluginMap[pluginType.Type] = pluginMapValue
+	pluginMap[pluginType.Type] = pluginType.pluginMapValue()
 
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: pluginType.HandshakeConfig,
