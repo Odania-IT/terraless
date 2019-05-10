@@ -9,6 +9,7 @@ require (
 	github.com/go-ini/ini v1.42.0
 	github.com/gobuffalo/packr/v2 v2.2.0
 	github.com/gofrs/flock v0.7.1
+	github.com/hashicorp/go-plugin v1.0.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/magiconair/properties v1.8.0
 	github.com/sirupsen/logrus v1.4.1

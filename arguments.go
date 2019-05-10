@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/Odania-IT/terraless/schema"
+	"github.com/Odania-IT/terraless/support"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
-	"os/user"
 	"path"
 	"path/filepath"
 )
@@ -28,16 +28,18 @@ var (
 	logLevel         = app.Flag("log-level", "Log level").Default("info").String()
 	noDeploy         = app.Flag("no-deploy", "Do not execute deploy").Bool()
 	noUpload         = app.Flag("no-upload", "Do not upload").Bool()
+	pluginDir        = app.Flag("plugin-directory", "Plugin Directory").String()
 	terraformCommand = app.Flag("terraform-command", "Terraform Command").Default("terraform").String()
 	variables        = app.Flag("var", "Variable").StringMap()
 
 	// Commands
-	authCommand    = app.Command("auth", "Authenticate with providers")
-	deployCommand  = app.Command("deploy", "Deploy")
-	initCommand    = app.Command("init", "Initialize Templates")
-	infoCommand    = app.Command("info", "Display information")
-	uploadCommand  = app.Command("upload", "Upload")
-	versionCommand = app.Command("version", "Version")
+	authCommand          = app.Command("auth", "Authenticate with providers")
+	deployCommand        = app.Command("deploy", "Deploy")
+	initCommand          = app.Command("init", "Initialize Terraless")
+	initTemplatesCommand = app.Command("init-templates", "Initialize Templates")
+	infoCommand          = app.Command("info", "Display information")
+	uploadCommand        = app.Command("upload", "Upload")
+	versionCommand       = app.Command("version", "Version")
 
 	// Auth Command Options
 	authProviderName = authCommand.Flag("provider", "Provider to authenticate with").String()
@@ -60,14 +62,9 @@ func detectGlobalConfig(configFolders []string) string {
 		return fullPath
 	}
 
-	usr, err := user.Current()
-	if err != nil {
-		logrus.Warnf("Could not detect user home folder")
-		return ""
-	}
-
+	homeDirectory := support.HomeDirectory()
 	for _, folder := range configFolders {
-		fullPath := filepath.Join(usr.HomeDir, folder, "terraless.yml")
+		fullPath := filepath.Join(homeDirectory, folder, "terraless.yml")
 
 		if _, err := os.Stat(fullPath); err == nil {
 			logrus.Infof("Found global config: %s\n", fullPath)
@@ -87,6 +84,7 @@ func parseArguments(args []string) (schema.Arguments, string) {
 		ForceDeploy:          *forceDeploy,
 		GlobalConfig:         *globalConfig,
 		LogLevel:             *logLevel,
+		PluginDirectory:      *pluginDir,
 		NoDeploy:             *noDeploy,
 		NoProviderGeneration: *deployNoProviderGeneration,
 		NoUpload:             *noUpload,
@@ -107,6 +105,12 @@ func parseArguments(args []string) (schema.Arguments, string) {
 	// Set log level
 	level, _ := logrus.ParseLevel(arguments.LogLevel)
 	logrus.SetLevel(level)
+
+	// Set plugin directory
+	if arguments.PluginDirectory == "" {
+		homeDirectory := support.HomeDirectory()
+		arguments.PluginDirectory = filepath.Join(homeDirectory, ".terraless", "plugins")
+	}
 
 	kingpinResult := kingpin.MustParse(app.Parse(args))
 

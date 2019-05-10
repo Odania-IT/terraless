@@ -42,6 +42,7 @@ func NewTerralessData(arguments schema.Arguments, terralessProviders []schema.Pr
 	logrus.Debugln(projectConfig.ActiveProviders)
 
 	terralessData.Config = schema.BuildTerralessConfig(*globalConfig, *projectConfig, arguments)
+	terralessData.Plugins = globalConfig.Plugins
 	validate := terralessData.Config.Validate()
 
 	if len(validate) > 0 {

@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/Odania-IT/terraless/config"
+	"github.com/Odania-IT/terraless/plugin"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/Odania-IT/terraless/support"
 	"github.com/Odania-IT/terraless/templates"
-	"github.com/Odania-IT/terraless/terraless_provider_aws"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
@@ -17,7 +17,7 @@ import (
 
 func detectTerralessProviders() []schema.Provider {
 	var terralessProviders []schema.Provider
-	terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
+	//terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
 
 	return terralessProviders
 }
@@ -61,6 +61,10 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 		stepDeploy(terralessData)
 	case initCommand.FullCommand():
 		logrus.Debug("Handling Init Command")
+		plugin.HandlePlugins(terralessData.Plugins, terralessData.Arguments.PluginDirectory)
+
+	case initTemplatesCommand.FullCommand():
+		logrus.Debug("Handling Init-Templates Command")
 		stepInitialize(terralessData)
 	case uploadCommand.FullCommand():
 		logrus.Debug("Handling Upload Command")

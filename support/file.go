@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
+	"os/user"
 	"path/filepath"
 )
 
@@ -41,4 +42,14 @@ func ReadFile(file string) string {
 	}
 
 	return string(content)
+}
+
+func HomeDirectory() string {
+	usr, err := user.Current()
+	if err != nil {
+		logrus.Warnf("Could not detect user home folder")
+		return ""
+	}
+
+	return usr.HomeDir
 }

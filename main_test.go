@@ -224,7 +224,7 @@ func TestMain_Init(t *testing.T) {
 			dummyTerralessProvider(),
 		},
 	}
-	kingpinResult := initCommand.FullCommand()
+	kingpinResult := initTemplatesCommand.FullCommand()
 	testProcessed = map[string]bool{}
 
 	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
@@ -271,7 +271,7 @@ func TestMain_Init_RemovesFileIfNoContent(t *testing.T) {
 			dummyTerralessProvider(),
 		},
 	}
-	kingpinResult := initCommand.FullCommand()
+	kingpinResult := initTemplatesCommand.FullCommand()
 	testProcessed = map[string]bool{}
 
 	_ = os.Mkdir(tmpFolder, 0755)

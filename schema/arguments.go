@@ -9,6 +9,7 @@ type Arguments struct {
 	NoDeploy             bool
 	NoProviderGeneration bool
 	NoUpload             bool
+	PluginDirectory      string
 	TerraformCommand     string
 	Variables            map[string]string
 }

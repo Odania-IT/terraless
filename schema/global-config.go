@@ -4,8 +4,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type TerralessPlugin struct {
+	Name    string `yaml:"Name"`
+	Version string `yaml:"Version"`
+}
+
 type TerralessGlobalConfig struct {
 	Backends []TerralessBackend `yaml:"Backends"`
+	Plugins  []TerralessPlugin  `yaml:"Plugins"`
 	Teams    []TerralessTeam    `yaml:"Teams"`
 	Uploads  []TerralessUpload  `yaml:"Uploads"`
 }
