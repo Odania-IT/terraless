@@ -16,11 +16,13 @@ type ExtensionRPC struct {
 	client *rpc.Client
 }
 
-func (g *ExtensionRPC) Exec(data TerralessData) {
+func (g *ExtensionRPC) Exec(data TerralessData) error {
 	err := g.client.Call("Plugin.Exec", data, new(interface{}))
 	if err != nil {
 		logrus.Fatal("Error executing Extension:Exec()", err)
 	}
+
+	return err
 }
 
 func (g *ExtensionRPC) Info() PluginInfo {

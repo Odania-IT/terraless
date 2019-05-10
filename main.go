@@ -85,7 +85,7 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 
 		var allTerralessProviders []string
 		for _, provider := range terralessData.TerralessProviders {
-			allTerralessProviders = append(allTerralessProviders, provider.Name())
+			allTerralessProviders = append(allTerralessProviders, fmt.Sprintf("%s-%s", provider.Info().Name, provider.Info().Version))
 		}
 		fmt.Printf("Terraless Providers: %s\n", strings.Join(allTerralessProviders, ", "))
 

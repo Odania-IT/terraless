@@ -98,7 +98,7 @@ func TestMain_DetectTerralessProviders(t *testing.T) {
 
 	// then
 	assert.Equal(t, 1, len(providers))
-	assert.Equal(t, "terraless-provider-aws", providers[0].Name())
+	assert.Equal(t, "terraless-provider-aws", providers[0].Info().Name)
 }
 
 func TestMain_Deploy(t *testing.T) {

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"bytes"
+	"github.com/hashicorp/go-plugin"
 	"net/rpc"
 )
 
@@ -9,7 +10,6 @@ type Provider interface {
 	CanHandle(resourceType string) bool
 	FinalizeTemplates(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer
 	Info() PluginInfo
-	Name() string
 	PrepareSession(terralessConfig TerralessConfig)
 	ProcessUpload(terralessData TerralessData, upload TerralessUpload) []string
 	RenderAuthorizerTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
@@ -33,4 +33,12 @@ type ProviderRPCServer struct {
 
 type ProviderPlugin struct {
 	Impl Provider
+}
+
+func (plugin *ProviderPlugin) Server(broker *plugin.MuxBroker) (interface{}, error) {
+	return &ProviderRPCServer{Impl: plugin.Impl}, nil
+}
+
+func (ProviderPlugin) Client(b *plugin.MuxBroker, c *rpc.Client) (interface{}, error) {
+	return &ExtensionRPC{client: c}, nil
 }
