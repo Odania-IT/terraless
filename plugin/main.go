@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 const (
@@ -151,6 +152,7 @@ func loadPlugin(pluginType PluginType, file string) {
 		Plugins:         pluginMap,
 		Cmd:             exec.Command(file),
 	})
+	// @TODO move client kill to final step in terraless
 	defer client.Kill()
 
 	// Connect via RPC
@@ -158,21 +160,31 @@ func loadPlugin(pluginType PluginType, file string) {
 	if err != nil {
 		logrus.Fatal(err)
 	}
+	time.Sleep(2 * time.Second)
+	logrus.Warn("sleep")
 
 	// Request the plugin
 	raw, err := rpcClient.Dispense(pluginType.Type)
 	if err != nil {
 		logrus.Fatal(err)
 	}
+	time.Sleep(2 * time.Second)
+	logrus.Warn("sleep2")
 
+	logrus.Warn("+ssssdsdsdsdsddsds")
 	var pluginInfo schema.PluginInfo
 	if pluginType.Type == ExtensionPluginType {
 		extension := raw.(schema.Extension)
 		pluginInfo = extension.Info()
 		extensions[fileName] = extension
 	} else if pluginType.Type == ProviderPluginType {
+		logrus.Warn("+++.sdsdsjfghuihguiehgiuerbgiuebgiuerbigubnrg")
 		provider := raw.(schema.Provider)
+		logrus.Warn("++++++++++++++++")
+		logrus.Warn(provider)
 		pluginInfo = provider.Info()
+		logrus.Warn("pluginInfo")
+		logrus.Warn(pluginInfo)
 		providers[fileName] = provider
 	} else {
 		logrus.Warnf("Could not detect plugin type for %s\n", fileName)
