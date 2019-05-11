@@ -3,18 +3,19 @@ package plugin
 import (
 	"fmt"
 	"github.com/Odania-IT/terraless/schema"
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/go-plugin"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
 const (
 	ExtensionPluginType = "Extension"
-	ProviderPluginType = "Provider"
+	ProviderPluginType  = "Provider"
 )
 
 type PluginType struct {
@@ -23,9 +24,17 @@ type PluginType struct {
 	HandshakeConfig plugin.HandshakeConfig
 }
 
+type PluginData struct {
+	Name      string
+	Version   string
+	Type      PluginType
+	Extension schema.Extension
+	Provider  schema.Provider
+}
+
 var pluginTypes = []PluginType{
 	{
-		Type: ExtensionPluginType,
+		Type:   ExtensionPluginType,
 		Prefix: "terraless-extension",
 		HandshakeConfig: plugin.HandshakeConfig{
 			ProtocolVersion:  1,
@@ -34,7 +43,7 @@ var pluginTypes = []PluginType{
 		},
 	},
 	{
-		Type: ProviderPluginType,
+		Type:   ProviderPluginType,
 		Prefix: "terraless-provider",
 		HandshakeConfig: plugin.HandshakeConfig{
 			ProtocolVersion:  1,
@@ -44,12 +53,24 @@ var pluginTypes = []PluginType{
 	},
 }
 
-var extensions = map[string]schema.Extension{}
-var providers = map[string]schema.Provider{}
+var clients []*plugin.Client
+var pluginsData []PluginData
+
+func Providers() []schema.Provider {
+	var result []schema.Provider
+
+	for _, pluginData := range pluginsData {
+		if pluginData.Type.Type == ProviderPluginType {
+			result = append(result, pluginData.Provider)
+		}
+	}
+
+	return result
+}
 
 func HandlePlugins(configPlugins []schema.TerralessPlugin, pluginDirectory string) bool {
 	logrus.Info("Processing Plugins")
-	existingPlugins := existingPlugins(pluginDirectory)
+	existingPlugins := ExistingPlugins(pluginDirectory)
 	var pluginInfos = []string{}
 	for _, configPlugin := range configPlugins {
 		version := configPlugin.Version
@@ -88,7 +109,7 @@ func verifyPluginInstalled(plugin schema.TerralessPlugin, existingPlugins map[st
 	return installPlugin(plugin)
 }
 
-func existingPlugins(pluginDirectory string) map[string]schema.TerralessPlugin {
+func ExistingPlugins(pluginDirectory string) map[string]schema.TerralessPlugin {
 	result := map[string]schema.TerralessPlugin{}
 
 	logrus.Debugf("Listing plugin directory %s\n", pluginDirectory)
@@ -114,18 +135,18 @@ func installPlugin(plugin schema.TerralessPlugin) string {
 	return plugin.Version
 }
 
-func detectPluginAndLoad(file string) {
+func detectPluginAndLoad(file string) PluginData {
 	fileName := filepath.Base(file)
 
 	for _, pluginType := range pluginTypes {
 		if strings.HasPrefix(fileName, pluginType.Prefix) {
 			logrus.Debugf("Detected plugin of type '%s' - %s\n", pluginType.Type, fileName)
-			loadPlugin(pluginType, file)
-			return
+			return loadPlugin(pluginType, file)
 		}
 	}
 
 	logrus.Warnf("Found unknown plugin %s\n", fileName)
+	return PluginData{}
 }
 
 func (pluginType PluginType) pluginMapValue() plugin.Plugin {
@@ -141,54 +162,65 @@ func (pluginType PluginType) pluginMapValue() plugin.Plugin {
 	return nil
 }
 
-func loadPlugin(pluginType PluginType, file string) {
+func ClosePlugins() {
+	logrus.Debug("Closing all plugins")
+	for _, client := range clients {
+		client.Kill()
+	}
+}
+
+func loadPlugin(pluginType PluginType, file string) PluginData {
 	fileName := filepath.Base(file)
 
 	pluginMap := map[string]plugin.Plugin{}
 	pluginMap[pluginType.Type] = pluginType.pluginMapValue()
 
+	logger := hclog.New(&hclog.LoggerOptions{
+		Name:   "plugin",
+		Output: os.Stdout,
+		Level:  hclog.Info,
+	})
+
 	client := plugin.NewClient(&plugin.ClientConfig{
 		HandshakeConfig: pluginType.HandshakeConfig,
 		Plugins:         pluginMap,
 		Cmd:             exec.Command(file),
+		Logger:          logger,
 	})
-	// @TODO move client kill to final step in terraless
-	defer client.Kill()
+	clients = append(clients, client)
 
 	// Connect via RPC
 	rpcClient, err := client.Client()
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	time.Sleep(2 * time.Second)
-	logrus.Warn("sleep")
 
 	// Request the plugin
 	raw, err := rpcClient.Dispense(pluginType.Type)
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	time.Sleep(2 * time.Second)
-	logrus.Warn("sleep2")
 
-	logrus.Warn("+ssssdsdsdsdsddsds")
+	pluginData := PluginData{
+		Type:      pluginType,
+	}
+
 	var pluginInfo schema.PluginInfo
 	if pluginType.Type == ExtensionPluginType {
 		extension := raw.(schema.Extension)
 		pluginInfo = extension.Info()
-		extensions[fileName] = extension
+		pluginData.Extension = extension
 	} else if pluginType.Type == ProviderPluginType {
-		logrus.Warn("+++.sdsdsjfghuihguiehgiuerbgiuebgiuerbigubnrg")
 		provider := raw.(schema.Provider)
-		logrus.Warn("++++++++++++++++")
-		logrus.Warn(provider)
 		pluginInfo = provider.Info()
-		logrus.Warn("pluginInfo")
-		logrus.Warn(pluginInfo)
-		providers[fileName] = provider
+		pluginData.Provider = provider
 	} else {
 		logrus.Warnf("Could not detect plugin type for %s\n", fileName)
 	}
 
 	logrus.Debugf("Loaded Plugin %s Version: %s\n", pluginInfo.Name, pluginInfo.Version)
+	pluginData.Name = pluginInfo.Name
+	pluginData.Version = pluginInfo.Version
+	pluginsData = append(pluginsData, pluginData)
+	return pluginData
 }

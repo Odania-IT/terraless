@@ -15,14 +15,8 @@ import (
 	"strings"
 )
 
-func detectTerralessProviders() []schema.Provider {
-	var terralessProviders []schema.Provider
-	//terralessProviders = append(terralessProviders, terraless_provider_aws.Provider())
-
-	return terralessProviders
-}
-
 func main() {
+	defer closePlugins()
 	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableLevelTruncation: true,
 	})
@@ -35,8 +29,13 @@ func main() {
 		return
 	}
 
-	terralessData := config.NewTerralessData(arguments, detectTerralessProviders())
+	plugin.ExistingPlugins(arguments.PluginDirectory)
+	terralessData := config.NewTerralessData(arguments, plugin.Providers())
 	processCommands(terralessData, kingpinResult)
+}
+
+func closePlugins() {
+	plugin.ClosePlugins()
 }
 
 func processCommands(terralessData *schema.TerralessData, kingpinResult string) {
