@@ -172,23 +172,23 @@ func (server *ProviderRPCServer) CanHandle(resourceType string, resp *bool) erro
 	return nil
 }
 
-func (server *ProviderRPCServer) FinalizeTemplates(terralessData TerralessData, buffer bytes.Buffer, resp *bytes.Buffer) error {
-	*resp = server.Impl.FinalizeTemplates(terralessData, buffer)
+func (server *ProviderRPCServer) FinalizeTemplates(args finalizeTemplatesArgs, resp *bytes.Buffer) error {
+	*resp = server.Impl.FinalizeTemplates(args.TerralessData, args.Buffer)
 	return nil
 }
 
-func (server *ProviderRPCServer) Info(resp *PluginInfo) error {
+func (server *ProviderRPCServer) Info(args interface{}, resp *PluginInfo) error {
 	*resp = server.Impl.Info()
 	return nil
 }
 
-func (server *ProviderRPCServer) PrepareSession(terralessConfig TerralessConfig) error {
+func (server *ProviderRPCServer) PrepareSession(terralessConfig TerralessConfig, resp *string) error {
 	server.Impl.PrepareSession(terralessConfig)
 	return nil
 }
 
-func (server *ProviderRPCServer) ProcessUpload(terralessData TerralessData, upload TerralessUpload, resp *[]string) error {
-	*resp = server.Impl.ProcessUpload(terralessData, upload)
+func (server *ProviderRPCServer) ProcessUpload(args processUploadArgs, resp *[]string) error {
+	*resp = server.Impl.ProcessUpload(args.TerralessData, args.Upload)
 	return nil
 }
 
@@ -207,13 +207,13 @@ func (server *ProviderRPCServer) RenderEndpointTemplates(config TerralessConfig,
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderFunctionTemplates(resourceType string, functionEvents FunctionEvents, terralessData *TerralessData, buffer bytes.Buffer, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderFunctionTemplates(resourceType, functionEvents, terralessData, buffer)
+func (server *ProviderRPCServer) RenderFunctionTemplates(args renderFunctionTemplatesArgs, resp *bytes.Buffer) error {
+	*resp = server.Impl.RenderFunctionTemplates(args.ResourceType, args.FunctionEvents, args.TerralessData, args.Buffer)
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderUploadTemplates(terralessData TerralessData, buffer bytes.Buffer, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderUploadTemplates(terralessData, buffer)
+func (server *ProviderRPCServer) RenderUploadTemplates(args renderUploadTemplatesArgs, resp *bytes.Buffer) error {
+	*resp = server.Impl.RenderUploadTemplates(args.TerralessData, args.Buffer)
 	return nil
 }
 
