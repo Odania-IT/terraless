@@ -10,7 +10,7 @@ import (
 type Provider interface {
 	CanHandle(resourceType string) bool
 	FinalizeTemplates(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer
-	Info(logLevel string) PluginInfo
+	Info() PluginInfo
 	PrepareSession(terralessConfig TerralessConfig)
 	ProcessUpload(terralessData TerralessData, upload TerralessUpload) []string
 	RenderAuthorizerTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
@@ -51,9 +51,9 @@ func (g *ProviderRPC) FinalizeTemplates(terralessData TerralessData, buffer byte
 	return resp
 }
 
-func (g *ProviderRPC) Info(logLevel string) PluginInfo {
+func (g *ProviderRPC) Info() PluginInfo {
 	var resp PluginInfo
-	err := g.client.Call("Plugin.Info", logLevel, &resp)
+	err := g.client.Call("Plugin.Info", new(interface{}), &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:Info()", err)
 	}
@@ -177,8 +177,8 @@ func (server *ProviderRPCServer) FinalizeTemplates(args FinalizeTemplatesArgs, r
 	return nil
 }
 
-func (server *ProviderRPCServer) Info(logLevel string, resp *PluginInfo) error {
-	*resp = server.Impl.Info(logLevel)
+func (server *ProviderRPCServer) Info(args string, resp *PluginInfo) error {
+	*resp = server.Impl.Info()
 	return nil
 }
 

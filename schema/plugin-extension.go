@@ -8,7 +8,7 @@ import (
 
 type Extension interface {
 	Exec(data TerralessData) error
-	Info(logLevel string) PluginInfo
+	Info() PluginInfo
 }
 
 // RPC
@@ -25,9 +25,9 @@ func (g *ExtensionRPC) Exec(data TerralessData) error {
 	return err
 }
 
-func (g *ExtensionRPC) Info(logLevel string) PluginInfo {
+func (g *ExtensionRPC) Info() PluginInfo {
 	var resp PluginInfo
-	err := g.client.Call("Plugin.Info", logLevel, &resp)
+	err := g.client.Call("Plugin.Info", new(interface{}), &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Extension:Info()", err)
 	}
@@ -45,8 +45,8 @@ func (server *ExtensionRPCServer) Exec(data TerralessData, resp *error) error {
 	return nil
 }
 
-func (server *ExtensionRPCServer) Info(logLevel string, resp *PluginInfo) error {
-	*resp = server.Impl.Info(logLevel)
+func (server *ExtensionRPCServer) Info(args string, resp *PluginInfo) error {
+	*resp = server.Impl.Info()
 	return nil
 }
 

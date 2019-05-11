@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 
-	plugin.ExistingPlugins(arguments.PluginDirectory)
+	plugin.ExistingPlugins(arguments)
 	terralessData := config.NewTerralessData(arguments, plugin.Providers())
 	processCommands(terralessData, kingpinResult)
 }
@@ -81,11 +81,17 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 		}
 		fmt.Printf("Providers: %s\n", strings.Join(allProviders, ", "))
 
-
+		var allTerralessExtensions []string
 		var allTerralessProviders []string
-		for _, provider := range terralessData.TerralessProviders {
-			allTerralessProviders = append(allTerralessProviders, fmt.Sprintf("%s-%s", provider.Info().Name, provider.Info().Version))
+		for _, pluginData := range plugin.PluginsData() {
+			info := fmt.Sprintf("%s-%s", pluginData.Name, pluginData.Version)
+			if pluginData.Type.Type == plugin.ExtensionPluginType {
+				allTerralessExtensions = append(allTerralessExtensions, info)
+			} else if pluginData.Type.Type == plugin.ProviderPluginType {
+				allTerralessProviders = append(allTerralessProviders, info)
+			}
 		}
+		fmt.Printf("Terraless Extensions: %s\n", strings.Join(allTerralessExtensions, ", "))
 		fmt.Printf("Terraless Providers: %s\n", strings.Join(allTerralessProviders, ", "))
 
 		fmt.Println("Variables:")
