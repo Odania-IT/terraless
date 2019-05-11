@@ -45,7 +45,7 @@ func (server *ExtensionRPCServer) Exec(data TerralessData, resp *error) error {
 	return nil
 }
 
-func (server *ExtensionRPCServer) Info(args string, resp *PluginInfo) error {
+func (server *ExtensionRPCServer) Info(args interface{}, resp *PluginInfo) error {
 	*resp = server.Impl.Info()
 	return nil
 }

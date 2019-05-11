@@ -177,7 +177,7 @@ func (server *ProviderRPCServer) FinalizeTemplates(args FinalizeTemplatesArgs, r
 	return nil
 }
 
-func (server *ProviderRPCServer) Info(args string, resp *PluginInfo) error {
+func (server *ProviderRPCServer) Info(args interface{}, resp *PluginInfo) error {
 	*resp = server.Impl.Info()
 	return nil
 }
