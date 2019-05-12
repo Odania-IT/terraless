@@ -66,7 +66,7 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 		logrus.Debug("Creating authorizer templates")
 
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			buffer = terralessProvider.RenderAuthorizerTemplates(config, buffer)
+			buffer.WriteString(terralessProvider.RenderAuthorizerTemplates(config))
 		}
 	}
 
@@ -86,7 +86,7 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 		logrus.Debug("Creating certificate templates")
 
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			buffer = terralessProvider.RenderCertificateTemplates(config, buffer)
+			buffer.WriteString(terralessProvider.RenderCertificateTemplates(config))
 		}
 	}
 
@@ -94,20 +94,20 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 		logrus.Debug("Creating endpoint templates")
 
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			buffer = terralessProvider.RenderEndpointTemplates(config, buffer)
+			buffer.WriteString(terralessProvider.RenderEndpointTemplates(config))
 		}
 	}
 
 	if len(config.Uploads) > 0 {
 		logrus.Debug("Creating cloudfront templates")
 		for _, terralessProvider := range terralessData.TerralessProviders {
-			buffer = terralessProvider.RenderUploadTemplates(*terralessData, buffer)
+			buffer.WriteString(terralessProvider.RenderUploadTemplates(*terralessData))
 		}
 	}
 
 	logrus.Debug("Finalizing templates")
 	for _, terralessProvider := range terralessData.TerralessProviders {
-		buffer = terralessProvider.FinalizeTemplates(*terralessData, buffer)
+		buffer.WriteString(terralessProvider.FinalizeTemplates(*terralessData))
 	}
 
 	return buffer

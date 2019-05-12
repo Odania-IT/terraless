@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"bytes"
 	"github.com/hashicorp/go-plugin"
 	"github.com/sirupsen/logrus"
 	"net/rpc"
@@ -9,15 +8,15 @@ import (
 
 type Provider interface {
 	CanHandle(resourceType string) bool
-	FinalizeTemplates(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer
+	FinalizeTemplates(terralessData TerralessData) string
 	Info() PluginInfo
 	PrepareSession(terralessConfig TerralessConfig)
 	ProcessUpload(terralessData TerralessData, upload TerralessUpload) []string
-	RenderAuthorizerTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
-	RenderCertificateTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
-	RenderEndpointTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer
-	RenderFunctionTemplates(resourceType string, functionEvents FunctionEvents, terralessData *TerralessData, buffer bytes.Buffer) bytes.Buffer
-	RenderUploadTemplates(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer
+	RenderAuthorizerTemplates(config TerralessConfig) string
+	RenderCertificateTemplates(config TerralessConfig) string
+	RenderEndpointTemplates(config TerralessConfig) string
+	RenderFunctionTemplates(resourceType string, functionEvents FunctionEvents, terralessData *TerralessData) string
+	RenderUploadTemplates(terralessData TerralessData) string
 }
 
 // RPC
@@ -35,15 +34,9 @@ func (g *ProviderRPC) CanHandle(resourceType string) bool {
 	return resp
 }
 
-type FinalizeTemplatesArgs struct {
-	TerralessData TerralessData
-	Buffer        bytes.Buffer
-}
-
-func (g *ProviderRPC) FinalizeTemplates(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer {
-	var resp bytes.Buffer
-	args := &FinalizeTemplatesArgs{terralessData, buffer}
-	err := g.client.Call("Plugin.FinalizeTemplates", args, &resp)
+func (g *ProviderRPC) FinalizeTemplates(terralessData TerralessData) string {
+	var resp string
+	err := g.client.Call("Plugin.FinalizeTemplates", terralessData, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:FinalizeTemplates()", err)
 	}
@@ -85,15 +78,9 @@ func (g *ProviderRPC) ProcessUpload(terralessData TerralessData, upload Terrales
 	return resp
 }
 
-type RenderWithConfigArgs struct {
-	Config TerralessConfig
-	Buffer bytes.Buffer
-}
-
-func (g *ProviderRPC) RenderAuthorizerTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-	var resp bytes.Buffer
-	args := &RenderWithConfigArgs{Config: config, Buffer: buffer}
-	err := g.client.Call("Plugin.RenderAuthorizerTemplates", args, &resp)
+func (g *ProviderRPC) RenderAuthorizerTemplates(config TerralessConfig) string {
+	var resp string
+	err := g.client.Call("Plugin.RenderAuthorizerTemplates", config, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:RenderAuthorizerTemplates()", err)
 	}
@@ -101,10 +88,9 @@ func (g *ProviderRPC) RenderAuthorizerTemplates(config TerralessConfig, buffer b
 	return resp
 }
 
-func (g *ProviderRPC) RenderCertificateTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-	var resp bytes.Buffer
-	args := &RenderWithConfigArgs{Config: config, Buffer: buffer}
-	err := g.client.Call("Plugin.RenderCertificateTemplates", args, &resp)
+func (g *ProviderRPC) RenderCertificateTemplates(config TerralessConfig) string {
+	var resp string
+	err := g.client.Call("Plugin.RenderCertificateTemplates", config, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:RenderCertificateTemplates()", err)
 	}
@@ -112,10 +98,9 @@ func (g *ProviderRPC) RenderCertificateTemplates(config TerralessConfig, buffer 
 	return resp
 }
 
-func (g *ProviderRPC) RenderEndpointTemplates(config TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-	var resp bytes.Buffer
-	args := &RenderWithConfigArgs{Config: config, Buffer: buffer}
-	err := g.client.Call("Plugin.RenderEndpointTemplates", args, &resp)
+func (g *ProviderRPC) RenderEndpointTemplates(config TerralessConfig) string {
+	var resp string
+	err := g.client.Call("Plugin.RenderEndpointTemplates", config, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:RenderEndpointTemplates()", err)
 	}
@@ -127,16 +112,14 @@ type RenderFunctionTemplatesArgs struct {
 	ResourceType string
 	FunctionEvents FunctionEvents
 	TerralessData *TerralessData
-	Buffer bytes.Buffer
 }
 
-func (g *ProviderRPC) RenderFunctionTemplates(resourceType string, functionEvents FunctionEvents, terralessData *TerralessData, buffer bytes.Buffer) bytes.Buffer {
-	var resp bytes.Buffer
+func (g *ProviderRPC) RenderFunctionTemplates(resourceType string, functionEvents FunctionEvents, terralessData *TerralessData) string {
+	var resp string
 	args := &RenderFunctionTemplatesArgs{
 		ResourceType: resourceType,
 		FunctionEvents: functionEvents,
 		TerralessData: terralessData,
-		Buffer: buffer,
 	}
 	err := g.client.Call("Plugin.RenderFunctionTemplates", args, &resp)
 	if err != nil {
@@ -146,15 +129,9 @@ func (g *ProviderRPC) RenderFunctionTemplates(resourceType string, functionEvent
 	return resp
 }
 
-type RenderUploadTemplatesArgs struct {
-	TerralessData TerralessData
-	Buffer        bytes.Buffer
-}
-
-func (g *ProviderRPC) RenderUploadTemplates(terralessData TerralessData, buffer bytes.Buffer) bytes.Buffer {
-	var resp bytes.Buffer
-	args := &RenderUploadTemplatesArgs{TerralessData: terralessData, Buffer: buffer}
-	err := g.client.Call("Plugin.RenderUploadTemplates", args, &resp)
+func (g *ProviderRPC) RenderUploadTemplates(terralessData TerralessData) string {
+	var resp string
+	err := g.client.Call("Plugin.RenderUploadTemplates", terralessData, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:RenderUploadTemplates()", err)
 	}
@@ -172,8 +149,8 @@ func (server *ProviderRPCServer) CanHandle(resourceType string, resp *bool) erro
 	return nil
 }
 
-func (server *ProviderRPCServer) FinalizeTemplates(args FinalizeTemplatesArgs, resp *bytes.Buffer) error {
-	*resp = server.Impl.FinalizeTemplates(args.TerralessData, args.Buffer)
+func (server *ProviderRPCServer) FinalizeTemplates(terralessData TerralessData, resp *string) error {
+	*resp = server.Impl.FinalizeTemplates(terralessData)
 	return nil
 }
 
@@ -192,28 +169,28 @@ func (server *ProviderRPCServer) ProcessUpload(args ProcessUploadArgs, resp *[]s
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderAuthorizerTemplates(args RenderWithConfigArgs, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderAuthorizerTemplates(args.Config, args.Buffer)
+func (server *ProviderRPCServer) RenderAuthorizerTemplates(config TerralessConfig, resp *string) error {
+	*resp = server.Impl.RenderAuthorizerTemplates(config)
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderCertificateTemplates(args RenderWithConfigArgs, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderCertificateTemplates(args.Config, args.Buffer)
+func (server *ProviderRPCServer) RenderCertificateTemplates(config TerralessConfig, resp *string) error {
+	*resp = server.Impl.RenderCertificateTemplates(config)
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderEndpointTemplates(args RenderWithConfigArgs, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderEndpointTemplates(args.Config, args.Buffer)
+func (server *ProviderRPCServer) RenderEndpointTemplates(config TerralessConfig, resp *string) error {
+	*resp = server.Impl.RenderEndpointTemplates(config)
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderFunctionTemplates(args RenderFunctionTemplatesArgs, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderFunctionTemplates(args.ResourceType, args.FunctionEvents, args.TerralessData, args.Buffer)
+func (server *ProviderRPCServer) RenderFunctionTemplates(args RenderFunctionTemplatesArgs, resp *string) error {
+	*resp = server.Impl.RenderFunctionTemplates(args.ResourceType, args.FunctionEvents, args.TerralessData)
 	return nil
 }
 
-func (server *ProviderRPCServer) RenderUploadTemplates(args RenderUploadTemplatesArgs, resp *bytes.Buffer) error {
-	*resp = server.Impl.RenderUploadTemplates(args.TerralessData, args.Buffer)
+func (server *ProviderRPCServer) RenderUploadTemplates(terralessData TerralessData, resp *string) error {
+	*resp = server.Impl.RenderUploadTemplates(terralessData)
 	return nil
 }
 

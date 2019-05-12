@@ -10,7 +10,7 @@ func processFunctions(terralessData *schema.TerralessData, buffer bytes.Buffer) 
 
 	for _, terralessProvider := range terralessData.TerralessProviders {
 		for resourceType, functionEvents := range consolidatedFunctionEvents {
-			buffer = terralessProvider.RenderFunctionTemplates(resourceType, functionEvents, terralessData, buffer)
+			buffer.WriteString(terralessProvider.RenderFunctionTemplates(resourceType, functionEvents, terralessData))
 		}
 	}
 
