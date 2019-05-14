@@ -2,38 +2,11 @@ package templates
 
 import (
 	"bytes"
+	"github.com/Odania-IT/terraless/dummy"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
-
-func dummyTerralessRenderProvider() schema.Provider {
-	return schema.Provider{
-		CanHandle: func(resourceType string) bool {
-			return resourceType == "dummy"
-		},
-		FinalizeTemplates: func(terralessData schema.TerralessData) string {
-			return ""
-		},
-		PrepareSession: func(terralessConfig schema.TerralessConfig) {
-		},
-		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
-			return []string{}
-		},
-		RenderAuthorizerTemplates: func(config schema.TerralessConfig) string {
-			return ""
-		},
-		RenderCertificateTemplates: func(config schema.TerralessConfig) string {
-			return ""
-		},
-		RenderEndpointTemplates: func(config schema.TerralessConfig) string {
-			return ""
-		},
-		RenderUploadTemplates: func(terralessData schema.TerralessData) string {
-			return ""
-		},
-	}
-}
 
 func TestTerralessTemplates_Render(t *testing.T) {
 	// given
@@ -69,8 +42,10 @@ func TestTerralessTemplates_Render(t *testing.T) {
 			},
 		},
 	}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
 	providers:= []schema.Provider{
-		dummyTerralessRenderProvider(),
+		provider,
 	}
 
 	// when

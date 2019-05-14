@@ -22,7 +22,7 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 	}
 
 	// when
-	terralessData := NewTerralessData(args, []schema.Provider{})
+	terralessData := NewTerralessData(args)
 
 	// then
 	expected := schema.TerralessData{
@@ -143,7 +143,6 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 				"aws": true,
 			},
 		},
-		TerralessProviders: []schema.Provider{},
 	}
 	assert.Equal(t, &expected, terralessData)
 }

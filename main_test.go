@@ -2,6 +2,8 @@ package main
 
 import (
 	"bytes"
+	"github.com/Odania-IT/terraless/dummy"
+	"github.com/Odania-IT/terraless/plugin"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/Odania-IT/terraless/support"
 	"github.com/stretchr/testify/assert"
@@ -10,50 +12,6 @@ import (
 	"path/filepath"
 	"testing"
 )
-
-var testProcessed map[string]bool
-
-func dummyTerralessProvider() schema.Provider {
-	return schema.Provider{
-		CanHandle: func(resourceType string) bool {
-			return resourceType == "dummy"
-		},
-		FinalizeTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
-			testProcessed["FinalizeTemplates"] = true
-			return buffer
-		},
-		Name: func() string {
-			return "terraless-provider-dummy"
-		},
-		PrepareSession: func(terralessConfig schema.TerralessConfig) {
-			testProcessed["PrepareSession"] = true
-		},
-		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
-			testProcessed["ProcessUpload"] = true
-			return []string{}
-		},
-		RenderAuthorizerTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-			testProcessed["RenderAuthorizerTemplates"] = true
-			return buffer
-		},
-		RenderCertificateTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-			testProcessed["RenderCertificateTemplates"] = true
-			return buffer
-		},
-		RenderEndpointTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-			testProcessed["RenderEndpointTemplates"] = true
-			return buffer
-		},
-		RenderFunctionTemplates: func(resourceType string, functionEvents schema.FunctionEvents, terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
-			testProcessed["RenderFunctionTemplates"] = true
-			return buffer
-		},
-		RenderUploadTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
-			testProcessed["RenderUploadTemplates"] = true
-			return buffer
-		},
-	}
-}
 
 func captureOutputProcessCommand(terralessData schema.TerralessData, kingpinResult string) string {
 	oldStdout := os.Stdout
@@ -92,12 +50,13 @@ func TestMain_InfoCommand(t *testing.T) {
 
 func TestMain_DetectTerralessProviders(t *testing.T) {
 	// given
+	arguments := schema.Arguments{}
 
 	// when
-	providers := detectTerralessProviders()
+	plugin.ExistingPlugins(arguments)
 
 	// then
-	assert.Equal(t, 1, len(providers))
+	assert.Equal(t, 0, len(providers))
 	assert.Equal(t, "terraless-provider-aws", providers[0].Info().Name)
 }
 
@@ -174,12 +133,13 @@ func TestMain_Deploy(t *testing.T) {
 				},
 			},
 		},
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
 	}
 	kingpinResult := deployCommand.FullCommand()
-	testProcessed = map[string]bool{}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
+	providers = []schema.Provider{
+		provider,
+	}
 
 	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
 
@@ -187,6 +147,7 @@ func TestMain_Deploy(t *testing.T) {
 	output := captureOutputProcessCommand(terralessData, kingpinResult)
 
 	// then
+	testProcessed := provider.TestProcessed()
 	assert.Contains(t, output, "apply -input=false terraform.plan")
 	assert.Equal(t, true, testProcessed["PrepareSession"])
 	assert.Equal(t, true, testProcessed["ProcessUpload"])
@@ -220,12 +181,10 @@ func TestMain_Init(t *testing.T) {
 				},
 			},
 		},
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
 	}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
 	kingpinResult := initTemplatesCommand.FullCommand()
-	testProcessed = map[string]bool{}
 
 	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
 
@@ -233,6 +192,7 @@ func TestMain_Init(t *testing.T) {
 	_ = captureOutputProcessCommand(terralessData, kingpinResult)
 
 	// then
+	testProcessed := provider.TestProcessed()
 	assert.Equal(t, false, testProcessed["PrepareSession"])
 	assert.Equal(t, false, testProcessed["ProcessUpload"])
 	assert.Equal(t, false, testProcessed["RenderAuthorizerTemplates"])
@@ -267,12 +227,10 @@ func TestMain_Init_RemovesFileIfNoContent(t *testing.T) {
 			},
 			SourcePath: tmpFolder,
 		},
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
 	}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
 	kingpinResult := initTemplatesCommand.FullCommand()
-	testProcessed = map[string]bool{}
 
 	_ = os.Mkdir(tmpFolder, 0755)
 	ressourcesFile := filepath.Join(tmpFolder, "terraless-resources.tf")
@@ -282,6 +240,7 @@ func TestMain_Init_RemovesFileIfNoContent(t *testing.T) {
 	_ = captureOutputProcessCommand(terralessData, kingpinResult)
 
 	// then
+	testProcessed := provider.TestProcessed()
 	assert.Equal(t, false, testProcessed["PrepareSession"])
 	assert.Equal(t, false, testProcessed["ProcessUpload"])
 	assert.Equal(t, false, testProcessed["RenderAuthorizerTemplates"])
@@ -323,12 +282,10 @@ func TestMain_Upload(t *testing.T) {
 				},
 			},
 		},
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
 	}
 	kingpinResult := uploadCommand.FullCommand()
-	testProcessed = map[string]bool{}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
 
 	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
 
@@ -336,6 +293,7 @@ func TestMain_Upload(t *testing.T) {
 	_ = captureOutputProcessCommand(terralessData, kingpinResult)
 
 	// then
+	testProcessed := provider.TestProcessed()
 	assert.Equal(t, true, testProcessed["PrepareSession"])
 	assert.Equal(t, true, testProcessed["ProcessUpload"])
 	assert.Equal(t, false, testProcessed["RenderAuthorizerTemplates"])
@@ -373,12 +331,10 @@ func TestMain_Auth(t *testing.T) {
 				},
 			},
 		},
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
 	}
 	kingpinResult := authCommand.FullCommand()
-	testProcessed = map[string]bool{}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
 
 	_ = os.Mkdir(filepath.Join(os.TempDir(), "terraless-provider-aws-test"), 0755)
 
@@ -386,6 +342,7 @@ func TestMain_Auth(t *testing.T) {
 	_ = captureOutputProcessCommand(terralessData, kingpinResult)
 
 	// then
+	testProcessed := provider.TestProcessed()
 	assert.Equal(t, true, testProcessed["PrepareSession"])
 	assert.Equal(t, false, testProcessed["ProcessUpload"])
 	assert.Equal(t, false, testProcessed["RenderAuthorizerTemplates"])

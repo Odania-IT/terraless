@@ -1,27 +1,11 @@
 package templates
 
 import (
+	"github.com/Odania-IT/terraless/dummy"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
-
-var uploadProcessed bool
-
-func dummyTerralessProvider() schema.Provider {
-	return schema.Provider{
-		CanHandle: func(resourceType string) bool {
-			return resourceType == "dummy"
-		},
-		PrepareSession: func(terralessConfig schema.TerralessConfig) {
-		},
-		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
-			uploadProcessed = true
-
-			return []string{}
-		},
-	}
-}
 
 func TestTerralessUploads_ProcessUploads(t *testing.T) {
 	// given
@@ -40,13 +24,16 @@ func TestTerralessUploads_ProcessUploads(t *testing.T) {
 			},
 		},
 	}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
 	providers := []schema.Provider{
-		dummyTerralessProvider(),
+		provider,
 	}
 
 	// when
 	ProcessUploads(terralessData, providers)
 
 	// then
-	assert.Equal(t, true, uploadProcessed)
+	testProcessed := provider.TestProcessed()
+	assert.Equal(t, true, testProcessed["RenderUploadTemplates"])
 }

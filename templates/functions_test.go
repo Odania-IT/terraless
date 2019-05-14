@@ -2,34 +2,16 @@ package templates
 
 import (
 	"bytes"
+	"github.com/Odania-IT/terraless/dummy"
 	"github.com/Odania-IT/terraless/schema"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-var functionRendered bool
-func dummyTerralessProviderFunctions() schema.Provider {
-	return schema.Provider{
-		CanHandle: func(resourceType string) bool {
-			return resourceType == "dummy"
-		},
-		PrepareSession: func(terralessConfig schema.TerralessConfig) {
-		},
-		RenderFunctionTemplates: func(resourceType string, functionEvents schema.FunctionEvents, terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
-			functionRendered = true
-
-			return buffer
-		},
-	}
-}
-
 func TestFunctions_ProcessFunctions(t *testing.T) {
 	// given
 	buffer := bytes.Buffer{}
 	terralessData := schema.TerralessData{
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProviderFunctions(),
-		},
 		Config: schema.TerralessConfig{
 			Functions: map[string]schema.TerralessFunction{
 				"DummyFunction": {
@@ -75,12 +57,18 @@ func TestFunctions_ProcessFunctions(t *testing.T) {
 			},
 		},
 	}
+	provider := dummy.TerralessProvider{}
+	provider.Reset()
+	providers := []schema.Provider{
+		provider,
+	}
 
 	// when
-	response := processFunctions(&terralessData, buffer)
+	response := processFunctions(&terralessData, providers, buffer)
 
 	// then
+	testProcessed := provider.TestProcessed()
 	expected := ""
 	assert.Equal(t, expected, response.String())
-	assert.Equal(t, true, functionRendered)
+	assert.Equal(t, true, testProcessed["RenderFunctionTemplates"])
 }

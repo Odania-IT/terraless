@@ -9,7 +9,6 @@ import (
 func TestFunctionsEvents_ConsolidateEventData(t *testing.T) {
 	// given
 	terralessData := schema.TerralessData{
-		TerralessProviders: []schema.Provider{},
 		Config: schema.TerralessConfig{
 			Functions: map[string]schema.TerralessFunction{
 				"DummyFunction": {
