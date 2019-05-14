@@ -55,7 +55,7 @@ data "archive_file" "lambda-archive" {
 
 `
 
-func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
+func Render(terralessData *schema.TerralessData, providers []schema.Provider, buffer bytes.Buffer) bytes.Buffer {
 	config := terralessData.Config
 
 	if !terralessData.Arguments.NoProviderGeneration && !terralessData.Config.Settings.NoProviderGeneration {
@@ -65,14 +65,14 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 	if len(config.Authorizers) > 0 {
 		logrus.Debug("Creating authorizer templates")
 
-		for _, terralessProvider := range terralessData.TerralessProviders {
+		for _, terralessProvider := range providers {
 			buffer.WriteString(terralessProvider.RenderAuthorizerTemplates(config))
 		}
 	}
 
 	if len(terralessData.Config.Functions) > 0 {
 		logrus.Debug("Creating function templates")
-		buffer = processFunctions(terralessData, buffer)
+		buffer = processFunctions(terralessData, providers, buffer)
 	}
 
 	if config.Package.SourceDir != "" {
@@ -85,7 +85,7 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 	if len(config.Certificates) > 0 {
 		logrus.Debug("Creating certificate templates")
 
-		for _, terralessProvider := range terralessData.TerralessProviders {
+		for _, terralessProvider := range providers {
 			buffer.WriteString(terralessProvider.RenderCertificateTemplates(config))
 		}
 	}
@@ -93,20 +93,20 @@ func Render(terralessData *schema.TerralessData, buffer bytes.Buffer) bytes.Buff
 	if len(config.Endpoints) > 0 {
 		logrus.Debug("Creating endpoint templates")
 
-		for _, terralessProvider := range terralessData.TerralessProviders {
+		for _, terralessProvider := range providers {
 			buffer.WriteString(terralessProvider.RenderEndpointTemplates(config))
 		}
 	}
 
 	if len(config.Uploads) > 0 {
 		logrus.Debug("Creating cloudfront templates")
-		for _, terralessProvider := range terralessData.TerralessProviders {
+		for _, terralessProvider := range providers {
 			buffer.WriteString(terralessProvider.RenderUploadTemplates(*terralessData))
 		}
 	}
 
 	logrus.Debug("Finalizing templates")
-	for _, terralessProvider := range terralessData.TerralessProviders {
+	for _, terralessProvider := range providers {
 		buffer.WriteString(terralessProvider.FinalizeTemplates(*terralessData))
 	}
 

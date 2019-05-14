@@ -5,5 +5,4 @@ type TerralessData struct {
 	Arguments          Arguments
 	Config             TerralessConfig
 	Plugins            []TerralessPlugin
-	TerralessProviders []Provider
 }

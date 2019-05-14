@@ -26,9 +26,6 @@ func dummyTerralessProvider() schema.Provider {
 func TestTerralessUploads_ProcessUploads(t *testing.T) {
 	// given
 	terralessData := schema.TerralessData{
-		TerralessProviders: []schema.Provider{
-			dummyTerralessProvider(),
-		},
 		Config: schema.TerralessConfig{
 			Uploads: []schema.TerralessUpload{
 				{
@@ -43,9 +40,12 @@ func TestTerralessUploads_ProcessUploads(t *testing.T) {
 			},
 		},
 	}
+	providers := []schema.Provider{
+		dummyTerralessProvider(),
+	}
 
 	// when
-	ProcessUploads(terralessData)
+	ProcessUploads(terralessData, providers)
 
 	// then
 	assert.Equal(t, true, uploadProcessed)

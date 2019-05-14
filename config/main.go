@@ -8,10 +8,9 @@ import (
 	"strings"
 )
 
-func NewTerralessData(arguments schema.Arguments, terralessProviders []schema.Provider) *schema.TerralessData {
+func NewTerralessData(arguments schema.Arguments) *schema.TerralessData {
 	terralessData := &schema.TerralessData{
 		Arguments:          arguments,
-		TerralessProviders: terralessProviders,
 	}
 
 	projectConfig := readProjectYamlConfig(terralessData.Arguments)

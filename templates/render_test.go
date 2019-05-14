@@ -12,25 +12,25 @@ func dummyTerralessRenderProvider() schema.Provider {
 		CanHandle: func(resourceType string) bool {
 			return resourceType == "dummy"
 		},
-		FinalizeTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
-			return buffer
+		FinalizeTemplates: func(terralessData schema.TerralessData) string {
+			return ""
 		},
 		PrepareSession: func(terralessConfig schema.TerralessConfig) {
 		},
 		ProcessUpload: func(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {
 			return []string{}
 		},
-		RenderAuthorizerTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-			return buffer
+		RenderAuthorizerTemplates: func(config schema.TerralessConfig) string {
+			return ""
 		},
-		RenderCertificateTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-			return buffer
+		RenderCertificateTemplates: func(config schema.TerralessConfig) string {
+			return ""
 		},
-		RenderEndpointTemplates: func(config schema.TerralessConfig, buffer bytes.Buffer) bytes.Buffer {
-			return buffer
+		RenderEndpointTemplates: func(config schema.TerralessConfig) string {
+			return ""
 		},
-		RenderUploadTemplates: func(terralessData schema.TerralessData, buffer bytes.Buffer) bytes.Buffer {
-			return buffer
+		RenderUploadTemplates: func(terralessData schema.TerralessData) string {
+			return ""
 		},
 	}
 }
@@ -68,13 +68,13 @@ func TestTerralessTemplates_Render(t *testing.T) {
 				},
 			},
 		},
-		TerralessProviders: []schema.Provider{
-			dummyTerralessRenderProvider(),
-		},
+	}
+	providers:= []schema.Provider{
+		dummyTerralessRenderProvider(),
 	}
 
 	// when
-	buffer := Render(&terralessData, bytes.Buffer{})
+	buffer := Render(&terralessData, providers, bytes.Buffer{})
 
 	// then
 	expected := `## Terraless: Lambda Package

@@ -15,6 +15,8 @@ import (
 	"strings"
 )
 
+var providers []schema.Provider
+
 func main() {
 	defer closePlugins()
 	logrus.SetFormatter(&logrus.TextFormatter{
@@ -30,7 +32,8 @@ func main() {
 	}
 
 	plugin.ExistingPlugins(arguments)
-	terralessData := config.NewTerralessData(arguments, plugin.Providers())
+	providers = plugin.Providers()
+	terralessData := config.NewTerralessData(arguments)
 	processCommands(terralessData, kingpinResult)
 }
 
@@ -147,13 +150,13 @@ func stepDeploy(terralessData *schema.TerralessData) {
 	if arguments.NoUpload {
 		logrus.Debug("Not uploading due to arguments....")
 	} else {
-		templates.ProcessUploads(*terralessData)
+		templates.ProcessUploads(*terralessData, providers)
 	}
 }
 
 func stepInitialize(terralessData *schema.TerralessData) {
 	buffer := bytes.Buffer{}
-	buffer = templates.Render(terralessData, buffer)
+	buffer = templates.Render(terralessData, providers, buffer)
 	targetFileName := filepath.Join(terralessData.Config.SourcePath, "terraless-resources.tf")
 
 	if buffer.Len() == 0 {
@@ -186,7 +189,7 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 		return
 	}
 
-	for _, terralessProvider := range terralessData.TerralessProviders {
+	for _, terralessProvider := range providers {
 		terralessProvider.PrepareSession(terralessData.Config)
 	}
 }
@@ -194,7 +197,7 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 func stepUpload(terralessData *schema.TerralessData) {
 	stepInitialize(terralessData)
 	stepPrepareSesssion(terralessData)
-	templates.ProcessUploads(*terralessData)
+	templates.ProcessUploads(*terralessData, providers)
 }
 
 func deployTerraform(config schema.TerralessConfig, environment string, forceDeploy bool, terraformCommand string) {
