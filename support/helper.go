@@ -21,6 +21,8 @@ func SanitizeString(val string) string {
 	val = strings.Replace(val, ".", "-", -1)
 	val = strings.Replace(val, "{", "-", -1)
 	val = strings.Replace(val, "}", "-", -1)
+	val = strings.Replace(val, "/", "-", -1)
+	val = strings.Replace(val, "+", "-", -1)
 
 	return val
 }
