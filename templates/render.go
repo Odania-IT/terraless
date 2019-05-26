@@ -173,6 +173,9 @@ func RenderTemplateToBuffer(config interface{}, buffer bytes.Buffer, tpl string,
 		"stringNotEmpty": func(val string) bool {
 			return val != ""
 		},
+		"stringEqual": func(val1 string, val2 string) bool {
+			return val1 == val2
+		},
 	}).Parse(tpl))
 	err := tmpl.Execute(&buffer, config)
 
