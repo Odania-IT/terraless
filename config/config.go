@@ -17,7 +17,8 @@ func readProjectYamlConfig(arguments schema.Arguments) *schema.TerralessProjectC
 	config := &schema.TerralessProjectConfig{}
 
 	if err != nil {
-		logrus.Fatalf("Could not read project config! Error: %s\n", err)
+		logrus.Warnf("Could not read project config! Error: %s\n", err)
+		return config.Validate()
 	}
 
 	if err := yaml.Unmarshal(bytes, config); err != nil {

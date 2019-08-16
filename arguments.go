@@ -42,7 +42,7 @@ var (
 	versionCommand       = app.Command("version", "Version")
 
 	// Auth Command Options
-	authProviderName = authCommand.Flag("provider", "Provider to authenticate with").String()
+	authProvider = authCommand.Flag("auth-provider", "Provider to authenticate with. Format: Team:Provider-Name:Data Data-Forma: key1=value:key2=value").String()
 
 	// Deploy Command Options
 	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()
@@ -79,6 +79,7 @@ func parseArguments(args []string) (schema.Arguments, string) {
 	kingpin.MustParse(app.Parse(args))
 
 	arguments := &schema.Arguments{
+		AuthProvider:         *authProvider,
 		Config:               *configFlag,
 		Environment:          *environment,
 		ForceDeploy:          *forceDeploy,

@@ -14,6 +14,29 @@ func NewTerralessData(arguments schema.Arguments) *schema.TerralessData {
 	}
 
 	projectConfig := readProjectYamlConfig(terralessData.Arguments)
+
+	if arguments.AuthProvider != "" {
+		parts := strings.Split(arguments.AuthProvider, ":")
+
+		if len(parts) < 2 {
+			logrus.Fatal("Invalid format for auth provider!")
+		}
+
+		projectConfig.ActiveProviders = []schema.TerralessActiveProvider{
+			{
+				Team: parts[0],
+				Providers: []schema.TerralessProvider{
+					{
+						Type: "global",
+						Name: parts[1],
+						Data: dataFromParts(parts),
+					},
+				},
+			},
+		}
+		projectConfig.Settings.AutoSignIn = true
+	}
+
 	// Set ProjectName if none is in the config
 	if projectConfig.ProjectName == "" {
 		projectConfig.ProjectName = filepath.Base(filepath.Dir(terralessData.Arguments.Config))
@@ -49,4 +72,17 @@ func NewTerralessData(arguments schema.Arguments) *schema.TerralessData {
 	}
 
 	return terralessData
+}
+
+func dataFromParts(data []string) map[string]string {
+	result := map[string]string{}
+
+	for idx, keyVal := range data {
+		if idx > 1 {
+			parts := strings.Split(keyVal, "=")
+			result[parts[0]] = parts[1]
+		}
+	}
+
+	return result
 }

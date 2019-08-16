@@ -1,6 +1,7 @@
 package schema
 
 type Arguments struct {
+	AuthProvider         string
 	Config               string
 	Environment          string
 	ForceDeploy          bool
