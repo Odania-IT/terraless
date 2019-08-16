@@ -327,6 +327,7 @@ func TestTerralessConfig_BuildTerralessConfig_Backend(t *testing.T) {
 			Data: map[string]string{
 				"key": "val",
 			},
+			Workspaces: map[string]string{},
 		},
 	}
 
@@ -341,6 +342,7 @@ func TestTerralessConfig_BuildTerralessConfig_Backend(t *testing.T) {
 			Data: map[string]string{
 				"key": "val",
 			},
+			Workspaces: map[string]string{},
 		},
 		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
@@ -448,6 +450,7 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackend(t *testing.T) {
 				"key": "val",
 				"secondKey": "val",
 			},
+			Workspaces: map[string]string{},
 		},
 		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{},
@@ -468,6 +471,7 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackendWithProvider(t *testi
 				Data: map[string]string{
 					"secondKey": "val",
 				},
+				Workspaces: map[string]string{},
 			},
 		},
 		Teams: []TerralessTeam{
@@ -509,6 +513,7 @@ func TestTerralessConfig_BuildTerralessConfig_GlobalBackendWithProvider(t *testi
 				"key": "val",
 				"secondKey": "val",
 			},
+			Workspaces: map[string]string{},
 		},
 		Certificates: map[string]TerralessCertificate{},
 		HasProvider: map[string]bool{

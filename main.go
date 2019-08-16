@@ -209,10 +209,8 @@ func deployTerraform(config schema.TerralessConfig, environment string, forceDep
 	}
 
 	executeCommand(config.SourcePath, terraformCommand, initArguments, false)
-	logrus.Info("Creating new terraform workspace")
-	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "new", config.ProjectName}, true)
-	logrus.Info("Selecting new terraform workspace")
-	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "select", config.ProjectName}, false)
+
+	selectTerraformWorkspace(config, terraformCommand)
 
 	logrus.Info("Executing terraform plan")
 	planArgs := []string{
@@ -231,4 +229,16 @@ func deployTerraform(config schema.TerralessConfig, environment string, forceDep
 	} else {
 		logrus.Info("Not deploying...")
 	}
+}
+
+func selectTerraformWorkspace(config schema.TerralessConfig, terraformCommand string) {
+	if config.Backend.Type == "remote" {
+		logrus.Debug("Backend Type Remote does handle states differently.... Not selecting workspace")
+		return
+	}
+
+	logrus.Info("Creating new terraform workspace")
+	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "new", config.ProjectName}, true)
+	logrus.Info("Selecting new terraform workspace")
+	executeCommand(config.SourcePath, terraformCommand, []string{"workspace", "select", config.ProjectName}, false)
 }

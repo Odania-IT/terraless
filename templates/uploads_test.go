@@ -35,5 +35,5 @@ func TestTerralessUploads_ProcessUploads(t *testing.T) {
 
 	// then
 	testProcessed := provider.TestProcessed()
-	assert.Equal(t, true, testProcessed["RenderUploadTemplates"])
+	assert.Equal(t, true, testProcessed["ProcessUpload"])
 }

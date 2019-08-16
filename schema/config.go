@@ -5,10 +5,11 @@ import (
 )
 
 type TerralessBackend struct {
-	Data     map[string]string `yaml:"Data"`
-	Name     string            `yaml:"Name"`
-	Provider string            `yaml:"Provider"`
-	Type     string            `yaml:"Type"`
+	Data       map[string]string `yaml:"Data"`
+	Name       string            `yaml:"Name"`
+	Provider   string            `yaml:"Provider"`
+	Type       string            `yaml:"Type"`
+	Workspaces map[string]string `yaml:"Workspaces"`
 }
 
 type TerralessCertificate struct {

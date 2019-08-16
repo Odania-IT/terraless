@@ -88,10 +88,11 @@ func (cfg *TerralessConfig) buildBackend(globalCfg TerralessGlobalConfig, projec
 
 	logrus.Debug("Building terraless backend")
 	cfg.Backend = TerralessBackend{
-		Data:     ProcessData(projectCfg.Backend.Data, arguments, projectCfg.Settings),
-		Name:     ProcessString(projectCfg.Backend.Name, arguments, projectCfg.Settings),
-		Provider: ProcessString(projectCfg.Backend.Provider, arguments, projectCfg.Settings),
-		Type:     ProcessString(projectCfg.Backend.Type, arguments, projectCfg.Settings),
+		Data:       ProcessData(projectCfg.Backend.Data, arguments, projectCfg.Settings),
+		Name:       ProcessString(projectCfg.Backend.Name, arguments, projectCfg.Settings),
+		Provider:   ProcessString(projectCfg.Backend.Provider, arguments, projectCfg.Settings),
+		Type:       ProcessString(projectCfg.Backend.Type, arguments, projectCfg.Settings),
+		Workspaces: ProcessData(projectCfg.Backend.Workspaces, arguments, projectCfg.Settings),
 	}
 
 	if cfg.Backend.Type == "global" {
@@ -101,6 +102,7 @@ func (cfg *TerralessConfig) buildBackend(globalCfg TerralessGlobalConfig, projec
 				cfg.Backend.Type = globalBackend.Type
 				cfg.Backend.Data = ProcessData(EnrichWithData(cfg.Backend.Data, globalBackend.Data), arguments, projectCfg.Settings)
 				cfg.Backend.Provider = ProcessString(globalBackend.Provider, arguments, projectCfg.Settings)
+				cfg.Backend.Workspaces = ProcessData(EnrichWithData(cfg.Backend.Workspaces, globalBackend.Workspaces), arguments, projectCfg.Settings)
 
 				return
 			}

@@ -39,6 +39,7 @@ func TestTerralessConfig_NewTerralessConfig(t *testing.T) {
 					"dynamodb_table": "terraform-state-lock",
 					"profile":        "my-aws-infrastrucutre-profile-developer",
 				},
+				Workspaces: map[string]string{},
 			},
 			Certificates: map[string]schema.TerralessCertificate{
 				"MyCert": {

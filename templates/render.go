@@ -33,6 +33,12 @@ terraform {
 	backend "{{ .Config.Backend.Type }}" {
 		{{ range $key, $value := .Config.Backend.Data }}{{$key}} = "{{$value}}"
 		{{ end }}
+		{{ if .Config.Backend.Workspaces }}
+		workspaces {
+			{{ range $key, $value := .Config.Backend.Workspaces }}{{$key}} = "{{$value}}"
+			{{ end }}
+		}
+		{{ end }}
 	}
 }
 {{ end }}
