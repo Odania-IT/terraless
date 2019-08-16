@@ -34,6 +34,21 @@ func main() {
 	plugin.ExistingPlugins(arguments)
 	providers = plugin.Providers()
 	terralessData := config.NewTerralessData(arguments)
+
+	for _, wantedPlugins := range terralessData.Plugins {
+		pluginAlreadyLoaded := false
+		for _, loadedPlugin := range plugin.PluginsData() {
+			if wantedPlugins.Name == loadedPlugin.Name {
+				logrus.Debugf("Already loaded plugin %s\n", wantedPlugins)
+				pluginAlreadyLoaded = true
+			}
+		}
+
+		if !pluginAlreadyLoaded {
+			plugin.DownloadPlugin(wantedPlugins, arguments.PluginDirectory)
+		}
+	}
+
 	processCommands(terralessData, kingpinResult)
 }
 

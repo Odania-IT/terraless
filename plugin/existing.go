@@ -33,11 +33,11 @@ func ExistingPlugins(arguments schema.Arguments) map[string]schema.TerralessPlug
 		return result
 	}
 
+	plugins := []string{}
 	for _, file := range files {
 		fileName := file.Name()
-		logrus.Debug(fileName)
-		detectPluginAndLoad(filepath.Join(arguments.PluginDirectory, fileName))
-		logrus.Debug(fileName)
+		pluginData := detectPluginAndLoad(filepath.Join(arguments.PluginDirectory, fileName))
+		plugins = append(plugins, pluginData.Name)
 	}
 
 	return result
@@ -114,5 +114,6 @@ func loadPlugin(pluginType PluginType, file string) PluginData {
 	pluginData.Name = pluginInfo.Name
 	pluginData.Version = pluginInfo.Version
 	pluginsData = append(pluginsData, pluginData)
+
 	return pluginData
 }
