@@ -38,6 +38,14 @@ changelog:
     - '^docs:'
     - '^test:'
 
+blobs:
+  - provider: s3
+    bucket: terraless-plugins
+    folder: "terraless/{{ .Tag }}"
+  - provider: s3
+    bucket: terraless-plugins
+    folder: "terraless/latest"
+
 # brew:
 #   github:
 #     owner: Odania-IT
