@@ -35,6 +35,7 @@ var (
 	// Commands
 	authCommand          = app.Command("auth", "Authenticate with providers")
 	deployCommand        = app.Command("deploy", "Deploy")
+	extensionCommand     = app.Command("extension", "Call extension")
 	initCommand          = app.Command("init", "Initialize Terraless")
 	initTemplatesCommand = app.Command("init-templates", "Initialize Templates")
 	infoCommand          = app.Command("info", "Display information")
@@ -46,6 +47,9 @@ var (
 
 	// Deploy Command Options
 	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()
+
+	// Extension Command Options
+	extensionCommandName = extensionCommand.Flag("name", "Extension Name").Required().String()
 )
 
 func detectGlobalConfig(configFolders []string) string {

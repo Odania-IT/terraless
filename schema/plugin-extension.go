@@ -7,8 +7,13 @@ import (
 )
 
 type Extension interface {
-	Exec(data TerralessData) error
+	Exec(globalConfig TerralessGlobalConfig, data TerralessData) error
 	Info() PluginInfo
+}
+
+type ExtensionExecArgs struct {
+	GlobalConfig TerralessGlobalConfig
+	TerralessData TerralessData
 }
 
 // RPC
@@ -16,8 +21,9 @@ type ExtensionRPC struct {
 	client *rpc.Client
 }
 
-func (g *ExtensionRPC) Exec(data TerralessData) error {
-	err := g.client.Call("Plugin.Exec", data, new(interface{}))
+func (g *ExtensionRPC) Exec(globalConfig TerralessGlobalConfig, terralessData TerralessData) error {
+	args := &ExtensionExecArgs{globalConfig, terralessData}
+	err := g.client.Call("Plugin.Exec", args, new(interface{}))
 	if err != nil {
 		logrus.Fatal("Error executing Extension:Exec()", err)
 	}
@@ -40,8 +46,8 @@ type ExtensionRPCServer struct {
 	Impl Extension
 }
 
-func (server *ExtensionRPCServer) Exec(data TerralessData, resp *error) error {
-	*resp = server.Impl.Exec(data)
+func (server *ExtensionRPCServer) Exec(args ExtensionExecArgs, resp *error) error {
+	*resp = server.Impl.Exec(args.GlobalConfig, args.TerralessData)
 	return nil
 }
 

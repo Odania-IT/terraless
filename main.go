@@ -15,6 +15,7 @@ import (
 	"strings"
 )
 
+var extensions []schema.Extension
 var providers []schema.Provider
 
 func main() {
@@ -32,6 +33,7 @@ func main() {
 	}
 
 	plugin.ExistingPlugins(arguments)
+	extensions = plugin.Extensions()
 	providers = plugin.Providers()
 	terralessData := config.NewTerralessData(arguments)
 
@@ -72,6 +74,33 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 	case deployCommand.FullCommand():
 		logrus.Debug("Handling Deploy Command")
 		stepDeploy(terralessData)
+	case extensionCommand.FullCommand():
+		logrus.Debugf("Handling Extension Command: %s\n",*extensionCommandName)
+		names := []string{
+			*extensionCommandName,
+			"extension-" + *extensionCommandName,
+			"terraless-extension-" + *extensionCommandName,
+		}
+		logrus.Warn(names)
+
+		var allTerralessExtensions []string
+		for _, extension := range extensions {
+			logrus.Warn(extension.Info())
+			allTerralessExtensions = append(allTerralessExtensions, extension.Info().Name)
+			if support.Contains(names, extension.Info().Name) {
+				logrus.Infof("Executing plugin %s [Version: %s]\n", extension.Info().Name, extension.Info().Version)
+				err := extension.Exec(config.GlobalConfig(), *terralessData)
+
+				if err != nil {
+					logrus.Fatalf("Error executing extension! %#v\n", err)
+				}
+
+				return
+			}
+		}
+
+		fmt.Printf("Terraless Extensions: %s\n", strings.Join(allTerralessExtensions, ", "))
+		logrus.Fatalf("Could not find extension: %s", *extensionCommandName)
 	case initCommand.FullCommand():
 		logrus.Debug("Handling Init Command")
 		plugin.HandlePlugins(terralessData.Plugins, terralessData.Arguments.PluginDirectory)

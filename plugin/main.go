@@ -42,6 +42,18 @@ var pluginTypes = []PluginType{
 
 var clients []*plugin.Client
 
+func Extensions() []schema.Extension {
+	var result []schema.Extension
+
+	for _, pluginData := range pluginsData {
+		if pluginData.Type.Type == ExtensionPluginType {
+			result = append(result, pluginData.Extension)
+		}
+	}
+
+	return result
+}
+
 func Providers() []schema.Provider {
 	var result []schema.Provider
 

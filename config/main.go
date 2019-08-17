@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+var globalConfig *schema.TerralessGlobalConfig
+
 func NewTerralessData(arguments schema.Arguments) *schema.TerralessData {
 	terralessData := &schema.TerralessData{
 		Arguments:          arguments,
@@ -59,7 +61,7 @@ func NewTerralessData(arguments schema.Arguments) *schema.TerralessData {
 		logrus.Fatalf("Error creating target directory: %s\n", err)
 	}
 
-	globalConfig := readGlobalYamlConfig(terralessData.Arguments)
+	globalConfig = readGlobalYamlConfig(terralessData.Arguments)
 
 	logrus.Debugln(projectConfig.ActiveProviders)
 
@@ -72,6 +74,10 @@ func NewTerralessData(arguments schema.Arguments) *schema.TerralessData {
 	}
 
 	return terralessData
+}
+
+func GlobalConfig() schema.TerralessGlobalConfig {
+	return *globalConfig
 }
 
 func dataFromParts(data []string) map[string]string {
