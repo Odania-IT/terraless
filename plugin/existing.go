@@ -33,11 +33,9 @@ func ExistingPlugins(arguments schema.Arguments) map[string]schema.TerralessPlug
 		return result
 	}
 
-	plugins := []string{}
 	for _, file := range files {
 		fileName := file.Name()
-		pluginData := detectPluginAndLoad(filepath.Join(arguments.PluginDirectory, fileName))
-		plugins = append(plugins, pluginData.Name)
+		detectPluginAndLoad(filepath.Join(arguments.PluginDirectory, fileName))
 	}
 
 	return result
