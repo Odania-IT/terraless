@@ -50,7 +50,7 @@ func DownloadPlugin(plugin schema.TerralessPlugin, pluginDirectory string) {
 	if runtime.GOOS != "windows" {
 		err := os.Chmod(fileName, 0755)
 		if err != nil {
-			logrus.Fatalf("Can not make plugin executable!", err)
+			logrus.Fatal("Can not make plugin executable!", err)
 		}
 	}
 	logrus.Infof("Downloaded plugin to %s\n", fileName)
