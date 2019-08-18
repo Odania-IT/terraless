@@ -43,7 +43,7 @@ var (
 	versionCommand       = app.Command("version", "Version")
 
 	// Auth Command Options
-	authProvider = authCommand.Flag("auth-provider", "Provider to authenticate with. Format: Team:Provider-Name:Data Data-Forma: key1=value:key2=value").String()
+	authProvider = authCommand.Flag("auth-provider", "Provider to authenticate with. Format: Team:Provider-Name:Data Data-Format: key1=value:key2=value").String()
 
 	// Deploy Command Options
 	deployNoProviderGeneration = deployCommand.Flag("no-provider-generation", "Do not generate terraform provider").Default("false").Bool()

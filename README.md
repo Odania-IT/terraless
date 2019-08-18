@@ -84,6 +84,19 @@ If you simply call "terraless" the help will be displayed.
 
 terraless -config examples/terraless-project.yml -global-config examples/terraless.yml
 
+### Command: auth
+
+This command authenticates to all providers in the project configuration.
+
+Alternatively you can use the parameter auth-provider in order to authenticate against a provider in the global configuration.
+
+    terraless auth --auth-provider TEAM_NAME:Provider-Name:Data
+    e.g. terraless auth --auth-provider MyTeam:my-team-role:role=developer
+
+The data should be in the format key1=value1:key2=value2
+
+The example above will authenticate against the team MyTeam with the provider my-team-role and set the data key role to developer.
+
 ### Command: deploy
 
 This command does:
@@ -93,6 +106,14 @@ This command does:
 * Packages Archive (Lambda)
 * Deploys Terraform
 * Processes all uploads
+
+### Command: extension
+
+This executes the extension with the name provider via the name parameter.
+
+### Command: info
+
+This command outputs some information. It displays the loaded configuration files, configured providers and loaded terraless plugins.
 
 ### Command: init
 
