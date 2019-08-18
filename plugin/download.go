@@ -22,6 +22,11 @@ func DownloadPlugin(plugin schema.TerralessPlugin, pluginDirectory string) {
 		extension = ".exe"
 	}
 
+	err := os.MkdirAll(pluginDirectory, 0755)
+	if err != nil {
+		logrus.Fatalf("Could not create plugin directory: %s\n", pluginDirectory)
+	}
+
 	logrus.Infof("Trying to download plugin %s [Version: %s]\n", plugin.Name, version)
 	url := "https://terraless-plugins.s3.eu-central-1.amazonaws.com/" +
 		plugin.Name +
@@ -35,11 +40,20 @@ func DownloadPlugin(plugin schema.TerralessPlugin, pluginDirectory string) {
 		extension
 
 	logrus.Debugf("Downloading plugin from url: %s\n", url)
-	err := downloadFile(pluginDirectory+"/"+plugin.Name+"_"+version, url)
+	fileName := pluginDirectory + "/" + plugin.Name + "-" + version
+	err = downloadFile(fileName, url)
 
 	if err != nil {
 		logrus.Fatalf("Failed downloading plugin %s [Version: %s]\n", plugin.Name, version)
 	}
+
+	if runtime.GOOS != "windows" {
+		err := os.Chmod(fileName, 0755)
+		if err != nil {
+			logrus.Fatalf("Can not make plugin executable!", err)
+		}
+	}
+	logrus.Infof("Downloaded plugin to %s\n", fileName)
 }
 
 func downloadFile(filepath string, url string) error {
