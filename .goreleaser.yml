@@ -23,6 +23,7 @@ dockers:
       - "odaniait/terraless:v{{ .Major }}.{{ .Minor }}"
       - odaniait/terraless:latest
 archive:
+  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
   wrap_in_directory: true
   format_overrides:
     - goos: windows
