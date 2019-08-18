@@ -47,6 +47,12 @@ func ReadFile(file string) string {
 func HomeDirectory() string {
 	usr, err := user.Current()
 	if err != nil {
+		homeDir := os.Getenv("HOME")
+
+		if homeDir != "" {
+			return homeDir
+		}
+
 		logrus.Warnf("Could not detect user home folder")
 		return ""
 	}
