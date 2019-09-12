@@ -44,7 +44,7 @@ func DownloadPlugin(plugin schema.TerralessPlugin, pluginDirectory string) {
 	err = downloadFile(fileName, url)
 
 	if err != nil {
-		logrus.Fatalf("Failed downloading plugin %s [Version: %s]\n", plugin.Name, version)
+		logrus.Fatalf("Failed downloading plugin %s [Version: %s] Error: %s\n", plugin.Name, version, err)
 	}
 
 	if runtime.GOOS != "windows" {
