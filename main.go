@@ -37,17 +37,17 @@ func main() {
 	providers = plugin.Providers()
 	terralessData := config.NewTerralessData(arguments)
 
-	for _, wantedPlugins := range terralessData.Plugins {
+	for _, wantedPlugin := range terralessData.Plugins {
 		pluginAlreadyLoaded := false
 		for _, loadedPlugin := range plugin.PluginsData() {
-			if wantedPlugins.Name == loadedPlugin.Name {
-				logrus.Debugf("Already loaded plugin %s\n", wantedPlugins)
+			if wantedPlugin.Name == loadedPlugin.Name {
+				logrus.Debugf("Already loaded plugin %s\n", wantedPlugin)
 				pluginAlreadyLoaded = true
 			}
 		}
 
 		if !pluginAlreadyLoaded {
-			plugin.DownloadPlugin(wantedPlugins, arguments.PluginDirectory)
+			plugin.DownloadPlugin(wantedPlugin, arguments.PluginDirectory)
 		}
 	}
 
