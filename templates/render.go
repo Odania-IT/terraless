@@ -23,7 +23,7 @@ variable "terraless-default-tags" {
 {{ range .Config.Providers }}
 # {{ .Name }}
 provider "{{.Type}}" {
-  {{ range $key, $value := awsProviderKeys .Data .Name }}{{$key}} = "{{$value}}"
+  {{ range $key, $value := awsProviderKeys .Data .Name .Type }}{{$key}} = "{{$value}}"
   {{ end }}
 }
 {{ end }}
@@ -119,8 +119,12 @@ func Render(terralessData *schema.TerralessData, providers []schema.Provider, bu
 	return buffer
 }
 
-func awsProviderKeys(data map[string]string, profileName string) map[string]string {
+func awsProviderKeys(data map[string]string, profileName string, providerType string) map[string]string {
 	result := map[string]string{}
+
+	if providerType != "aws" {
+		return data
+	}
 
 	if data["alias"] != "" {
 		result["alias"] = data["alias"]

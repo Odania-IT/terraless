@@ -71,6 +71,8 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 	case authCommand.FullCommand():
 		logrus.Debug("Handling Auth Command")
 		stepPrepareSesssion(terralessData)
+
+		logrus.Info("Authentication done")
 	case deployCommand.FullCommand():
 		logrus.Debug("Handling Deploy Command")
 		stepDeploy(terralessData)
