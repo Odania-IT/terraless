@@ -100,7 +100,7 @@ func TestTerralessTemplates_AwsProviderKeys_WithProfileInData(t *testing.T) {
 	}
 
 	// when
-	result := awsProviderKeys(data, "profile1")
+	result := awsProviderKeys(data, "profile1", "aws")
 
 	// then
 	assert.Equal(t, "myAlias", result["alias"])
@@ -116,7 +116,7 @@ func TestTerralessTemplates_AwsProviderKeys_WithoutProfileInData(t *testing.T) {
 	}
 
 	// when
-	result := awsProviderKeys(data, "profile1")
+	result := awsProviderKeys(data, "profile1", "aws")
 
 	// then
 	assert.Equal(t, "myAlias", result["alias"])
