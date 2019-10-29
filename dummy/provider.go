@@ -19,8 +19,10 @@ func (provider TerralessProvider) CanHandle(resourceType string) bool {
 	return resourceType == "dummy"
 }
 
-func (provider TerralessProvider) PrepareSession(terralessConfig schema.TerralessConfig) {
+func (provider TerralessProvider) PrepareSession(terralessConfig schema.TerralessConfig) map[string]string {
 	testProcessed["PrepareSession"] = true
+
+	return map[string]string{}
 }
 
 func (provider TerralessProvider) ProcessUpload(terralessData schema.TerralessData, upload schema.TerralessUpload) []string {

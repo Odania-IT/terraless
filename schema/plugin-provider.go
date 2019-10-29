@@ -10,7 +10,7 @@ type Provider interface {
 	CanHandle(resourceType string) bool
 	FinalizeTemplates(terralessData TerralessData) string
 	Info() PluginInfo
-	PrepareSession(terralessConfig TerralessConfig)
+	PrepareSession(terralessConfig TerralessConfig) map[string]string
 	ProcessUpload(terralessData TerralessData, upload TerralessUpload) []string
 	RenderAuthorizerTemplates(config TerralessConfig) string
 	RenderCertificateTemplates(config TerralessConfig) string
@@ -54,12 +54,14 @@ func (g *ProviderRPC) Info() PluginInfo {
 	return resp
 }
 
-func (g *ProviderRPC) PrepareSession(terralessConfig TerralessConfig) {
-	var resp string
+func (g *ProviderRPC) PrepareSession(terralessConfig TerralessConfig) map[string]string {
+	var resp map[string]string
 	err := g.client.Call("Plugin.PrepareSession", terralessConfig, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:PrepareSession()", err)
 	}
+
+	return resp
 }
 
 type ProcessUploadArgs struct {
@@ -159,7 +161,7 @@ func (server *ProviderRPCServer) Info(args interface{}, resp *PluginInfo) error 
 	return nil
 }
 
-func (server *ProviderRPCServer) PrepareSession(terralessConfig TerralessConfig, resp *string) error {
+func (server *ProviderRPCServer) PrepareSession(terralessConfig TerralessConfig, resp *map[string]string) error {
 	server.Impl.PrepareSession(terralessConfig)
 	return nil
 }

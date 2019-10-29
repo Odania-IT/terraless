@@ -157,7 +157,6 @@ func versionInfo() {
 }
 
 func stepDeploy(terralessData *schema.TerralessData) {
-
 	stepInitialize(terralessData)
 	stepPrepareSesssion(terralessData)
 
@@ -232,7 +231,9 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 	}
 
 	for _, terralessProvider := range providers {
-		terralessProvider.PrepareSession(terralessData.Config)
+		environmentVariables := terralessProvider.PrepareSession(terralessData.Config)
+
+		logrus.Warn(environmentVariables)
 	}
 }
 
