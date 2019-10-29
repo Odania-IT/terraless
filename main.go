@@ -233,7 +233,14 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 	for _, terralessProvider := range providers {
 		environmentVariables := terralessProvider.PrepareSession(terralessData.Config)
 
-		logrus.Warn(environmentVariables)
+		if len(environmentVariables) > 0 {
+			logrus.Infof("Environment variables from %s\n", terralessProvider.Info().Name)
+			for key, val := range environmentVariables {
+				logrus.Infof("%s=%s \n", key, val)
+			}
+		} else {
+			logrus.Debugf("No environment variables from %s\n", terralessProvider.Info().Name)
+		}
 	}
 }
 

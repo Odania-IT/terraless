@@ -162,7 +162,7 @@ func (server *ProviderRPCServer) Info(args interface{}, resp *PluginInfo) error 
 }
 
 func (server *ProviderRPCServer) PrepareSession(terralessConfig TerralessConfig, resp *map[string]string) error {
-	server.Impl.PrepareSession(terralessConfig)
+	*resp = server.Impl.PrepareSession(terralessConfig)
 	return nil
 }
 
