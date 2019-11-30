@@ -77,7 +77,7 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 		logrus.Debug("Handling Deploy Command")
 		stepDeploy(terralessData)
 	case extensionCommand.FullCommand():
-		logrus.Debugf("Handling Extension Command: %s\n",*extensionCommandName)
+		logrus.Debugf("Handling Extension Command: %s\n", *extensionCommandName)
 		names := []string{
 			*extensionCommandName,
 			"extension-" + *extensionCommandName,
@@ -175,6 +175,10 @@ func stepDeploy(terralessData *schema.TerralessData) {
 			}
 		}
 
+		if currentConfig.Package.BuildCommand != "" {
+			executeCommand(currentConfig.SourcePath, currentConfig.Package.BuildCommand, []string{}, false)
+		}
+
 		deployTerraform(currentConfig, arguments.Environment, arguments.ForceDeploy, arguments.TerraformCommand)
 
 		if currentConfig.Package.SourceDir != "" {
@@ -237,6 +241,8 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 			logrus.Infof("Environment variables from %s\n", terralessProvider.Info().Name)
 			for key, val := range environmentVariables {
 				logrus.Infof("%s=%s \n", key, val)
+
+				// TODO write to file? how to handle that?
 			}
 		} else {
 			logrus.Debugf("No environment variables from %s\n", terralessProvider.Info().Name)

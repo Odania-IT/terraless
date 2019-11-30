@@ -89,8 +89,10 @@ type TerralessFunction struct {
 }
 
 type TerralessPackage struct {
-	SourceDir  string `yaml:"SourceDir"`
-	OutputPath string
+	BuildCommand      string `yaml:"BuildCommand"`
+	LambdaArchiveFile string `yaml:"LambdaArchiveFile"`
+	SourceDir         string `yaml:"SourceDir"`
+	OutputPath        string
 }
 
 type TerralessProvider struct {
