@@ -2,3 +2,4 @@
 **/.terraless
 **/terraform.tfstate.d
 **/terraform.plan
+currentEnvironment.sh
