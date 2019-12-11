@@ -9,6 +9,7 @@ import (
 type Provider interface {
 	CanHandle(resourceType string) bool
 	FinalizeTemplates(terralessData TerralessData) string
+	GenerateHelperFunctionCommand(teamName string, providerName string, roleName string) string
 	Info() PluginInfo
 	PrepareSession(terralessConfig TerralessConfig) map[string]string
 	ProcessUpload(terralessData TerralessData, upload TerralessUpload) []string
@@ -39,6 +40,23 @@ func (g *ProviderRPC) FinalizeTemplates(terralessData TerralessData) string {
 	err := g.client.Call("Plugin.FinalizeTemplates", terralessData, &resp)
 	if err != nil {
 		logrus.Fatal("Error executing Provider:FinalizeTemplates()", err)
+	}
+
+	return resp
+}
+
+type GenerateHelperFunctionCommandArgs struct {
+	TeamName string
+	ProviderName string
+	RoleName string
+}
+
+func (g *ProviderRPC) GenerateHelperFunctionCommand(teamName string, providerName string, roleName string) string {
+	var resp string
+	args := &GenerateHelperFunctionCommandArgs{teamName, providerName, roleName}
+	err := g.client.Call("Plugin.GenerateHelperFunctionCommand", args, &resp)
+	if err != nil {
+		logrus.Fatal("Error executing Provider:GenerateHelperFunctionCommand()", err)
 	}
 
 	return resp
@@ -153,6 +171,11 @@ func (server *ProviderRPCServer) CanHandle(resourceType string, resp *bool) erro
 
 func (server *ProviderRPCServer) FinalizeTemplates(terralessData TerralessData, resp *string) error {
 	*resp = server.Impl.FinalizeTemplates(terralessData)
+	return nil
+}
+
+func (server *ProviderRPCServer) GenerateHelperFunctionCommand(args GenerateHelperFunctionCommandArgs, resp *string) error {
+	*resp = server.Impl.GenerateHelperFunctionCommand(args.TeamName, args.ProviderName, args.RoleName)
 	return nil
 }
 

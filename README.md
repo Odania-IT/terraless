@@ -97,6 +97,10 @@ The data should be in the format key1=value1:key2=value2
 
 The example above will authenticate against the team MyTeam with the provider my-team-role and set the data key role to developer.
 
+### Command: auth-helper
+
+Creates authentication helper file that can be sourced in the shell in order to have shortcuts for helpers.
+
 ### Command: deploy
 
 This command does:
@@ -121,6 +125,12 @@ This created the Terraless Terraform Templates for the given config. Two files w
 
     terraless-main.tf        <-- The generated Terraform Provider and Backend will be in here
     terraless-project.yml    <-- All other resources for certificates, endpoints, functions, ... will be in this file
+
+It also creates a helper script that sources the "currentEnvironment.sh" file. This contains the environment variables
+that are returned from the plugins during execution. The file is created in the Terraless Directory (default: ~/.terraless).
+You can use it like:
+
+    ~/.terraless/terraless-env auth --auth-provider TEAM:ACCOUNT:role=AWS_ROLE
 
 ### Command: session
 

@@ -37,6 +37,12 @@ func (provider TerralessProvider) FinalizeTemplates(terralessData schema.Terrale
 	return ""
 }
 
+func (provider TerralessProvider) GenerateHelperFunctionCommand(teamName string, providerName string, roleName string) string {
+	testProcessed["GenerateHelperFunctionCommand"] = true
+
+	return "generated-command-" + teamName + "-" + providerName + "-" + roleName
+}
+
 func (provider TerralessProvider) RenderAuthorizerTemplates(config schema.TerralessConfig) string {
 	testProcessed["RenderAuthorizerTemplates"] = true
 

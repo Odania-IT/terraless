@@ -12,7 +12,7 @@ import (
 
 const (
 	CODENAME = "Flying Eagle"
-	VERSION  = "0.2.2"
+	VERSION  = "0.3.1"
 )
 
 var dir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
@@ -35,6 +35,7 @@ var (
 
 	// Commands
 	authCommand          = app.Command("auth", "Authenticate with providers")
+	authHelperCommand    = app.Command("auth-helper", "Create authentication helper file")
 	deployCommand        = app.Command("deploy", "Deploy")
 	extensionCommand     = app.Command("extension", "Call extension")
 	initCommand          = app.Command("init", "Initialize Terraless")

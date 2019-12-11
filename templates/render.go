@@ -61,6 +61,14 @@ data "archive_file" "lambda-archive" {
 
 `
 
+var lambdaLocalFileTemplate = `## Terraless: Lambda Package - Local File
+
+data "local_file" "lambda-archive" {
+  filename = "{{.Config.Package.LambdaArchiveFile}}"
+}
+
+`
+
 func Render(terralessData *schema.TerralessData, providers []schema.Provider, buffer bytes.Buffer) bytes.Buffer {
 	config := terralessData.Config
 
@@ -79,6 +87,11 @@ func Render(terralessData *schema.TerralessData, providers []schema.Provider, bu
 	if len(terralessData.Config.Functions) > 0 {
 		logrus.Debug("Creating function templates")
 		buffer = processFunctions(terralessData, providers, buffer)
+	}
+
+	if config.Package.LambdaArchiveFile != "" {
+		logrus.Debug("Creating LambdaArchiveFile")
+		buffer = RenderTemplateToBuffer(terralessData, buffer, lambdaLocalFileTemplate, "terraless-package-local-file")
 	}
 
 	if config.Package.SourceDir != "" {
