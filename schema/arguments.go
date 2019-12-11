@@ -11,6 +11,7 @@ type Arguments struct {
 	NoProviderGeneration bool
 	NoUpload             bool
 	PluginDirectory      string
+	TerralessDirectory   string
 	TerraformCommand     string
 	Variables            map[string]string
 }

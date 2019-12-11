@@ -29,6 +29,7 @@ var (
 	noDeploy         = app.Flag("no-deploy", "Do not execute deploy").Bool()
 	noUpload         = app.Flag("no-upload", "Do not upload").Bool()
 	pluginDir        = app.Flag("plugin-directory", "Plugin Directory").String()
+	terralessDir     = app.Flag("terraless-directory", "Terraless Directory (Default: ~/.terraless)").String()
 	terraformCommand = app.Flag("terraform-command", "Terraform Command").Default("terraform").String()
 	variables        = app.Flag("var", "Variable").StringMap()
 
@@ -90,6 +91,7 @@ func parseArguments(args []string) (schema.Arguments, string) {
 		GlobalConfig:         *globalConfig,
 		LogLevel:             *logLevel,
 		PluginDirectory:      *pluginDir,
+		TerralessDirectory:   *terralessDir,
 		NoDeploy:             *noDeploy,
 		NoProviderGeneration: *deployNoProviderGeneration,
 		NoUpload:             *noUpload,
@@ -111,10 +113,15 @@ func parseArguments(args []string) (schema.Arguments, string) {
 	level, _ := logrus.ParseLevel(arguments.LogLevel)
 	logrus.SetLevel(level)
 
+	// Set terraless directory
+	if arguments.TerralessDirectory == "" {
+		homeDirectory := support.HomeDirectory()
+		arguments.TerralessDirectory = filepath.Join(homeDirectory, ".terraless")
+	}
+
 	// Set plugin directory
 	if arguments.PluginDirectory == "" {
-		homeDirectory := support.HomeDirectory()
-		arguments.PluginDirectory = filepath.Join(homeDirectory, ".terraless", "plugins")
+		arguments.PluginDirectory = filepath.Join(arguments.TerralessDirectory, "plugins")
 	}
 
 	kingpinResult := kingpin.MustParse(app.Parse(args))

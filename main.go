@@ -106,6 +106,7 @@ func processCommands(terralessData *schema.TerralessData, kingpinResult string) 
 	case initCommand.FullCommand():
 		logrus.Debug("Handling Init Command")
 		plugin.HandlePlugins(terralessData.Plugins, terralessData.Arguments.PluginDirectory)
+		initHelperFunction(arguments)
 
 	case initTemplatesCommand.FullCommand():
 		logrus.Debug("Handling Init-Templates Command")
@@ -234,20 +235,16 @@ func stepPrepareSesssion(terralessData *schema.TerralessData) {
 		return
 	}
 
+	environmentVariables := map[string]string{}
 	for _, terralessProvider := range providers {
-		environmentVariables := terralessProvider.PrepareSession(terralessData.Config)
-
-		if len(environmentVariables) > 0 {
-			logrus.Infof("Environment variables from %s\n", terralessProvider.Info().Name)
-			for key, val := range environmentVariables {
-				logrus.Infof("%s=%s \n", key, val)
-
-				// TODO write to file? how to handle that?
-			}
-		} else {
-			logrus.Debugf("No environment variables from %s\n", terralessProvider.Info().Name)
+		logrus.Infof("Environment variables from %s\n", terralessProvider.Info().Name)
+		for key, val := range terralessProvider.PrepareSession(terralessData.Config) {
+			logrus.Infof("%s=%s \n", key, val)
+			environmentVariables[key] = val
 		}
 	}
+
+	writeEnvironmentFile(terralessData.Arguments, environmentVariables)
 }
 
 func stepUpload(terralessData *schema.TerralessData) {
