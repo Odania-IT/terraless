@@ -12,7 +12,7 @@ import (
 
 const (
 	CODENAME = "Flying Eagle"
-	VERSION  = "0.3.1"
+	VERSION  = "0.3.2"
 )
 
 var dir, _ = filepath.Abs(filepath.Dir(os.Args[0]))
