@@ -27,7 +27,7 @@ source {{.TerralessDirectory}}/currentEnvironment.sh
 `
 
 	helperFunctionTemplate = `
-function terraless-{{.AliasName}}() {
+function terraless-auth-{{.AliasName}}() {
 	{{ .Command }}
 }
 `
