@@ -22,12 +22,19 @@ dockers:
       - "odaniait/terraless:v{{ .Major }}"
       - "odaniait/terraless:v{{ .Major }}.{{ .Minor }}"
       - odaniait/terraless:latest
-archive:
-  name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
-  wrap_in_directory: true
-  format_overrides:
-    - goos: windows
-      format: zip
+archives:
+  - id: archive
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    wrap_in_directory: true
+    format_overrides:
+      - goos: windows
+        format: zip
+brews:
+  - name: terraless
+    github:
+      owner: Odania-IT
+      name: terraless
+    description: "Terraless is helper to easily deploy Lambda Functions and different projects with Terraform"
 checksum:
   name_template: 'checksums.txt'
 snapshot:
