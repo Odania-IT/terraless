@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc // indirect
 	github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf // indirect
 	github.com/aws/aws-sdk-go v1.30.13
-	github.com/gobuffalo/packr/v2 v2.2.0
+	github.com/gobuffalo/packr/v2 v2.8.1
 	github.com/hashicorp/go-hclog v0.0.0-20180709165350-ff2cf002a8dd
 	github.com/hashicorp/go-plugin v1.0.0
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
