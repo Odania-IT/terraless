@@ -19,6 +19,6 @@ require (
 	golang.org/x/net v0.0.0-20190420063019-afa5a82059c6 // indirect
 	golang.org/x/sys v0.0.0-20190419153524-e8e3143a4f4a // indirect
 	golang.org/x/tools v0.0.0-20190420000508-685fecacd0a0 // indirect
-	gopkg.in/alecthomas/kingpin.v2 v2.2.6
+	gopkg.in/alecthomas/kingpin.v2 v2.4.0
 	gopkg.in/yaml.v2 v2.2.2
 )
